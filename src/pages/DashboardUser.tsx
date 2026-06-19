@@ -1,23 +1,40 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { useAuth } from '../context/AuthContext';
-import { BookOpen, GraduationCap, CheckCircle } from 'lucide-react';
+import { BookOpen, GraduationCap, CheckCircle, Clock, BarChart4 } from 'lucide-react';
 
 export const DashboardUser: React.FC = () => {
   const { user } = useAuth();
+  const [loading, setLoading] = useState(true);
   const [userStats, setUserStats] = useState({
     totalDiikuti: 0,
-    lulusCount: 0
+    lulusCount: 0,
+    totalJamValid: 0
   });
-  const [loading, setLoading] = useState(true);
+
+  const [categoryStats, setCategoryStats] = useState({
+    core: 0,
+    generic: 0,
+    specific: 0,
+    supplementary: 0
+  });
+
+  // Helper untuk mengubah string durasi 'HH:MM:SS' menjadi nilai desimal jam
+  const parseDurasiToHours = (durasiStr: string | null): number => {
+    if (!durasiStr) return 0;
+    const parts = durasiStr.split(':');
+    const hours = parseInt(parts[0], 10) || 0;
+    const minutes = parseInt(parts[1], 10) || 0;
+    return hours + (minutes / 60);
+  };
 
   useEffect(() => {
-    const fetchUserStats = async () => {
+    const fetchUserStatsAndAnalytics = async () => {
       if (!user?.perner) return;
       try {
         setLoading(true);
 
-        // 1. Dapatkan id_peserta internal
+        // 1. Dapatkan id_peserta internal database
         const { data: pData } = await supabase
           .from('data_peserta')
           .select('id_peserta')
@@ -31,65 +48,173 @@ export const DashboardUser: React.FC = () => {
             .select('*', { count: 'exact', head: true })
             .eq('perner', user.perner);
 
-          // 3. Hitung kelas yang sudah diverifikasi 'Lulus'
-          const { count: countLulus } = await supabase
+          // 3. Ambil seluruh data hasil pelatihan untuk kalkulasi jam & rumpun kategori
+          const { data: hasilData } = await supabase
             .from('hasil_pelatihan')
-            .select('*', { count: 'exact', head: true })
-            .eq('id_peserta', pData.id_peserta)
-            .eq('status', 'Lulus')
-            .eq('is_verified', true);
+            .select(`
+              status, is_verified,
+              jadwal_pelatihan (
+                durasi,
+                type_pelatihan (kategori_pelatihan)
+              )
+            `)
+            .eq('id_peserta', pData.id_peserta);
+
+          const listHasil = hasilData || [];
+          
+          let lulusCount = 0;
+          let akumulasiJam = 0;
+          let core = 0, generic = 0, specific = 0, supp = 0;
+
+          listHasil.forEach((h: any) => {
+            const kategori = h.jadwal_pelatihan?.type_pelatihan?.kategori_pelatihan?.toLowerCase();
+            
+            // Hitung distribusi kelas yang terdaftar
+            if (kategori === 'core') core++;
+            else if (kategori === 'generic') generic++;
+            else if (kategori === 'specific') specific++;
+            else if (kategori === 'supplementary') supp++;
+
+            // Akumulasi jam valid hanya dari kelas yang Lulus & Terverifikasi Admin
+            if (h.status === 'Lulus' && h.is_verified) {
+              lulusCount++;
+              akumulasiJam += parseDurasiToHours(h.jadwal_pelatihan?.durasi);
+            }
+          });
 
           setUserStats({
             totalDiikuti: countJadwal || 0,
-            lulusCount: countLulus || 0
+            lulusCount: lulusCount,
+            totalJamValid: akumulasiJam
+          });
+
+          setCategoryStats({
+            core,
+            generic,
+            specific,
+            supplementary: supp
           });
         }
       } catch (err) {
-        console.error('Gagal memuat statistik user:', err);
+        console.error('Gagal memuat analitik dasbor user:', err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchUserStats();
+    fetchUserStatsAndAnalytics();
   }, [user]);
+
+  // Hitung persentase pemenuhan KPI target wajib tahunan perusahaan (Batas minimal 10 Jam)
+  const persenKpi = Math.min((userStats.totalJamValid / 10) * 100, 100);
 
   return (
     <div className="p-6 space-y-6 text-white">
       {/* Welcome Card Banner */}
-      <div className="bg-gradient-to-r from-slate-800 to-slate-850 p-6 rounded-xl border border-slate-700/80 shadow-xl">
+      <div className="bg-gradient-to-r from-slate-900 to-slate-850 p-6 rounded-xl border border-slate-800 shadow-xl">
         <h1 className="text-2xl font-bold text-slate-100">
-          Selamat Datang Kembali, <span className="text-sky-400 font-mono font-medium">{user?.username}</span>!
+          Selamat Datang Kembali, <span className="text-sky-400 font-mono font-bold">{user?.username}</span>!
         </h1>
-        <p className="text-sm text-slate-400 mt-1 font-sans">
-          Nomor PERNER Kedinasan Anda: <span className="text-slate-300 font-mono font-semibold">{user?.perner || '-'}</span>
+        <p className="text-xs text-slate-400 mt-1 font-mono">
+          Nomor PERNER Kedinasan: <span className="text-sky-400 font-semibold">{user?.perner || '-'}</span>
         </p>
       </div>
 
       {loading ? (
-        <div className="text-xs font-mono text-slate-500 animate-pulse">Sinkronisasi status kompetensi Anda...</div>
+        <div className="text-xs font-mono text-slate-500 animate-pulse">Menyelaraskan metrik capaian diklat Anda...</div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {/* Kartu Status Kelas */}
-          <div className="bg-slate-800 p-5 rounded-xl border border-slate-700 flex items-center space-x-4">
-            <div className="p-3 bg-sky-500/10 rounded-lg text-sky-400"><BookOpen className="w-6 h-6" /></div>
-            <div>
-              <p className="text-xs text-slate-400 font-mono uppercase">Total Kelas Diikuti</p>
-              <h3 className="text-2xl font-bold font-mono text-slate-100">{userStats.totalDiikuti}</h3>
-              <p className="text-[10px] text-slate-500 mt-0.5">Terdaftar di manifes jadwal diklat</p>
+        <>
+          {/* ================= CARD METRIK KINERJA UTAMA ================= */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div className="bg-slate-800 p-5 rounded-xl border border-slate-700 flex items-center space-x-4">
+              <div className="p-3 bg-sky-500/10 rounded-lg text-sky-400"><BookOpen className="w-5 h-5" /></div>
+              <div>
+                <p className="text-[10px] text-slate-500 font-mono uppercase">Kelas Diikuti</p>
+                <h3 className="text-2xl font-bold font-mono text-slate-100">{userStats.totalDiikuti}</h3>
+              </div>
+            </div>
+
+            <div className="bg-slate-800 p-5 rounded-xl border border-slate-700 flex items-center space-x-4">
+              <div className="p-3 bg-emerald-500/10 rounded-lg text-emerald-400"><GraduationCap className="w-5 h-5" /></div>
+              <div>
+                <p className="text-[10px] text-slate-500 font-mono uppercase">Kelas Lulus Valid</p>
+                <h3 className="text-2xl font-bold font-mono text-emerald-400">{userStats.lulusCount}</h3>
+              </div>
+            </div>
+
+            <div className="bg-slate-800 p-5 rounded-xl border border-slate-700 flex items-center space-x-4">
+              <div className="p-3 bg-amber-500/10 rounded-lg text-amber-400"><Clock className="w-5 h-5" /></div>
+              <div>
+                <p className="text-[10px] text-slate-500 font-mono uppercase">Total Waktu Diklat</p>
+                <h3 className="text-2xl font-bold font-mono text-amber-400">{userStats.totalJamValid.toFixed(1)} Jam</h3>
+              </div>
             </div>
           </div>
 
-          {/* Kartu Status Sertifikat Kelulusan */}
-          <div className="bg-slate-800 p-5 rounded-xl border border-slate-700 flex items-center space-x-4">
-            <div className="p-3 bg-emerald-500/10 rounded-lg text-emerald-400"><GraduationCap className="w-6 h-6" /></div>
-            <div>
-              <p className="text-xs text-slate-400 font-mono uppercase">Sertifikat Kompetensi</p>
-              <h3 className="text-2xl font-bold font-mono text-emerald-400">{userStats.lulusCount}</h3>
-              <p className="text-[10px] text-slate-500 mt-0.5">Telah diverifikasi oleh Admin Diklat</p>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* ================= PANEL TARGET PROGRESS KPI (10 JAM WAJIB) ================= */}
+            <div className="lg:col-span-2 bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-4 flex flex-col justify-between">
+              <div className="space-y-1.5">
+                <div className="flex items-center space-x-2 text-sky-400">
+                  <Clock className="w-4 h-4" />
+                  <h4 className="text-xs font-bold uppercase font-mono tracking-wider">Pemenuhan Target Jam Diklat Tahunan</h4>
+                </div>
+                <p className="text-xs text-slate-400 font-sans leading-relaxed">
+                  Berdasarkan regulasi kompetensi internal, Anda diwajibkan menyelesaikan **minimal 10 jam pelatihan terverifikasi** setiap periode tahun berjalan.
+                </p>
+              </div>
+
+              <div className="space-y-2 bg-slate-950/40 p-4 rounded-xl border border-slate-900/60">
+                <div className="flex justify-between items-end font-mono text-xs">
+                  <span className="text-slate-400">Progres Akumulasi Waktu:</span>
+                  <span className={`font-bold ${userStats.totalJamValid >= 10 ? 'text-emerald-400' : 'text-amber-400'}`}>
+                    {userStats.totalJamValid.toFixed(1)} / 10.0 Jam ({persenKpi.toFixed(0)}%)
+                  </span>
+                </div>
+                
+                <div className="w-full bg-slate-900 h-3 rounded-full overflow-hidden border border-slate-800">
+                  <div 
+                    className={`h-full transition-all duration-500 ${userStats.totalJamValid >= 10 ? 'bg-gradient-to-r from-emerald-600 to-emerald-400' : 'bg-gradient-to-r from-amber-500 to-amber-400'}`}
+                    style={{ width: `${persenKpi}%` }}
+                  ></div>
+                </div>
+
+                <div className="flex justify-between items-center pt-1">
+                  <span className={`text-[10px] font-bold font-mono px-2 py-0.5 rounded ${userStats.totalJamValid >= 10 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'}`}>
+                    {userStats.totalJamValid >= 10 ? '✓ Target KPI Terpenuhi (Compliant)' : '⚠️ Belum Memenuhi Target Wajib'}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* ================= PANEL DISTRIBUSI KATEGORI PERSONAL ================= */}
+            <div className="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-3.5">
+              <div className="flex items-center space-x-2 text-sky-400">
+                <BarChart4 className="w-4 h-4" />
+                <h4 className="text-xs font-bold uppercase font-mono tracking-wider">Rumpun Kelas Anda</h4>
+              </div>
+              
+              <div className="space-y-2.5 font-mono text-[11px] pt-1">
+                <div>
+                  <div className="flex justify-between text-slate-400 mb-0.5"><span>Core Training</span><span className="text-slate-500">{categoryStats.core} Kelas</span></div>
+                  <div className="w-full bg-slate-900 h-1.5 rounded-full"><div className="bg-sky-500 h-full rounded-full" style={{ width: `${categoryStats.core ? '100%' : '0%'}` }}></div></div>
+                </div>
+                <div>
+                  <div className="flex justify-between text-slate-400 mb-0.5"><span>Generic Training</span><span className="text-slate-500">{categoryStats.generic} Kelas</span></div>
+                  <div className="w-full bg-slate-900 h-1.5 rounded-full"><div className="bg-purple-500 h-full rounded-full" style={{ width: `${categoryStats.generic ? '100%' : '0%'}` }}></div></div>
+                </div>
+                <div>
+                  <div className="flex justify-between text-slate-400 mb-0.5"><span>Specific Training</span><span className="text-slate-500">{categoryStats.specific} Kelas</span></div>
+                  <div className="w-full bg-slate-900 h-1.5 rounded-full"><div className="bg-amber-500 h-full rounded-full" style={{ width: `${categoryStats.specific ? '100%' : '0%'}` }}></div></div>
+                </div>
+                <div>
+                  <div className="flex justify-between text-slate-400 mb-0.5"><span>Supplementary</span><span className="text-slate-500">{categoryStats.supplementary} Kelas</span></div>
+                  <div className="w-full bg-slate-900 h-1.5 rounded-full"><div className="bg-teal-500 h-full rounded-full" style={{ width: `${categoryStats.supplementary ? '100%' : '0%'}` }}></div></div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+        </>
       )}
 
       {/* Informasi Alur Karyawan */}

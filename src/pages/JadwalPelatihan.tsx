@@ -1,14 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
+import { useAuth } from '../context/AuthContext'; // Ambil data login terkini
 import { Plus, Trash2, Edit2, Check, X, Users, UserPlus, RefreshCw } from 'lucide-react';
 
 export const JadwalPelatihan: React.FC = () => {
+  const { user } = useAuth(); // Ambil data user untuk deteksi role
   const [schedules, setSchedules] = useState<any[]>([]);
   const [types, setTypes] = useState<any[]>([]);
   const [trainers, setTrainers] = useState<any[]>([]);
   const [locations, setLocations] = useState<any[]>([]);
-  const [allPeserta, setAllPeserta] = useState<any[]>([]); // Data induk seluruh karyawan
+  const [allPeserta, setAllPeserta] = useState<any[]>([]); 
   const [loading, setLoading] = useState(true);
+
+  // Deteksi Role SPV secara ketat
+  const currentRole = user && user.role ? String(user.role).toLowerCase() : 'user';
+  const isSpv = currentRole === 'spv';
 
   // States Form Tambah Baru
   const [idPelatihan, setIdPelatihan] = useState('');
@@ -73,6 +79,7 @@ export const JadwalPelatihan: React.FC = () => {
 
   const handleCreateJadwal = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSpv) return alert('Akses ditolak: Supervisor tidak diizinkan memodifikasi data.');
     try {
       const computedDurasi = calculateDuration(waktuMulai, waktuSelesai);
       const { error } = await supabase
@@ -95,7 +102,8 @@ export const JadwalPelatihan: React.FC = () => {
     }
   };
 
-  const handleUpdateJadwal = async (id: number) => {
+const handleUpdateJadwal = async (id: number) => {
+    if (isSpv) return;
     try {
       const computedDurasi = calculateDuration(editFields.waktu_mulai, editFields.waktu_selesai);
       const { error } = await supabase
@@ -110,7 +118,7 @@ export const JadwalPelatihan: React.FC = () => {
           durasi: computedDurasi,
           biaya: Number(editFields.biaya)
         })
-        .eq('id_jadwal', id);
+        .eq('id_jadwal', id); // <-- Sudah diperbaiki dari .update menjadi .eq
 
       if (error) throw error;
       fetchAllData();
@@ -118,8 +126,9 @@ export const JadwalPelatihan: React.FC = () => {
       alert(`Gagal update: ${err.message}`);
     }
   };
-
+  
   const handleDelete = async (id: number) => {
+    if (isSpv) return;
     if (!confirm('Hapus plot kelas terjadwal ini?')) return;
     try {
       const { error } = await supabase.from('jadwal_pelatihan').delete().eq('id_jadwal', id);
@@ -130,7 +139,6 @@ export const JadwalPelatihan: React.FC = () => {
     }
   };
 
-  // 1. Membuka Modal Manajemen Peserta untuk Sesi Terpilih
   const viewAndManagePeserta = async (idJadwal: number, pelatihanName: string) => {
     setSelectedJadwalId(idJadwal);
     setCurrentJadwalTitle(`Sesi ${idJadwal} - ${pelatihanName}`);
@@ -138,7 +146,6 @@ export const JadwalPelatihan: React.FC = () => {
     fetchAssignedPeserta(idJadwal);
   };
 
-  // 2. Mengambil manifest karyawan yang terdaftar di sesi terkait
   const fetchAssignedPeserta = async (idJadwal: number) => {
     setLoadingPeserta(true);
     try {
@@ -166,27 +173,24 @@ export const JadwalPelatihan: React.FC = () => {
     }
   };
 
-  // 3. Eksekusi Aksi Plotting/Assign User Baru ke Dalam Kelas
   const handleAssignPeserta = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSpv) return;
     if (!selectedJadwalId || !selectedPernerToAssign) return;
 
     try {
-      // Cek apakah user sudah ter-assign sebelumnya di kelas ini
       const isExist = assignedPeserta.some(p => p.perner === selectedPernerToAssign);
       if (isExist) {
         alert("Karyawan ini sudah terdaftar di dalam kelas!");
         return;
       }
 
-      // A. Insert ke tabel hubungan peserta_jadwal
       const { error: regError } = await supabase
         .from('peserta_jadwal')
         .insert([{ id_jadwal: selectedJadwalId, perner: selectedPernerToAssign }]);
 
       if (regError) throw regError;
 
-      // B. Dapatkan id_peserta internal database untuk pembuatan baris hasil_pelatihan
       const { data: pData } = await supabase
         .from('data_peserta')
         .select('id_peserta')
@@ -211,11 +215,10 @@ export const JadwalPelatihan: React.FC = () => {
     }
   };
 
-  // 4. Batalkan Pendaftaran Karyawan dari Kelas
-const handleRemovePeserta = async (pernerPeserta: string) => {
+  const handleRemovePeserta = async (pernerPeserta: string) => {
+    if (isSpv) return;
     if (!selectedJadwalId || !confirm("Batalkan keikutsertaan karyawan ini dari kelas?")) return;
     try {
-      // A. Ambil id_peserta terlebih dahulu untuk menghapus baris di hasil_pelatihan
       const { data: pData } = await supabase
         .from('data_peserta')
         .select('id_peserta')
@@ -223,7 +226,6 @@ const handleRemovePeserta = async (pernerPeserta: string) => {
         .maybeSingle();
 
       if (pData?.id_peserta) {
-        // B. Hapus record nilai di hasil_pelatihan terlebih dahulu agar tidak mengunci constraint
         await supabase
           .from('hasil_pelatihan')
           .delete()
@@ -231,16 +233,13 @@ const handleRemovePeserta = async (pernerPeserta: string) => {
           .eq('id_peserta', pData.id_peserta);
       }
 
-      // C. Hapus hubungan di peserta_jadwal dengan casting tipe data eksplisit
       const { error } = await supabase
         .from('peserta_jadwal')
         .delete()
-        .eq('id_jadwal', Number(selectedJadwalId)) // Memastikan berupa Number (smallint)
-        .eq('perner', String(pernerPeserta));      // Memastikan berupa String (text)
+        .eq('id_jadwal', Number(selectedJadwalId))
+        .eq('perner', String(pernerPeserta));
 
       if (error) throw error;
-      
-      // Refresh manifest peserta di dalam modal secara real-time
       fetchAssignedPeserta(selectedJadwalId);
     } catch (err: any) {
       alert("Gagal unassign peserta: " + err.message);
@@ -255,8 +254,12 @@ const handleRemovePeserta = async (pernerPeserta: string) => {
     <div className="p-6 space-y-6 text-white relative">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-sky-400">Jadwal Pelatihan</h1>
-          <p className="text-sm text-slate-400 font-mono">Sequential Auto-ID • Durasi Otomatis • Peserta Monitoring</p>
+          <h1 className="text-2xl font-bold text-sky-400">
+            {isSpv ? 'Monitoring Jadwal' : 'Jadwal Pelatihan'}
+          </h1>
+          <p className="text-sm text-slate-400 font-mono">
+            {isSpv ? 'Mode Peninjau: Memantau plot durasi dan anggaran anggaran pelatihan korporat.' : 'Sequential Auto-ID • Durasi Otomatis • Peserta Monitoring'}
+          </p>
         </div>
         <button onClick={fetchAllData} className="p-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-slate-300 transition-colors cursor-pointer">
           <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
@@ -264,59 +267,63 @@ const handleRemovePeserta = async (pernerPeserta: string) => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Form Pembuatan Jadwal */}
-        <form onSubmit={handleCreateJadwal} className="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-4 h-fit">
-          <h3 className="font-bold text-sky-400 text-xs uppercase font-mono tracking-wider">Plot Sesi Baru</h3>
-          
-          <div>
-            <label className="block text-xs font-semibold text-slate-400 mb-1">Nama / Jenis Pelatihan</label>
-            <select required value={idPelatihan} onChange={e => setIdPelatihan(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none">
-              <option value="">-- Pilih Jenis --</option>
-              {types.map(t => <option key={t.id_pelatihan} value={t.id_pelatihan}>{t.nama_pelatihan}</option>)}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-slate-400 mb-1">Assign Trainer</label>
-            <select required value={idTrainer} onChange={e => setIdTrainer(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none">
-              <option value="">-- Pilih Trainer --</option>
-              {trainers.map(tr => <option key={tr.id_trainer} value={tr.id_trainer}>{tr.nama_trainer}</option>)}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-slate-400 mb-1">Lokasi Pelatihan</label>
-            <select required value={idLokasi} onChange={e => setIdLokasi(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none">
-              <option value="">-- Pilih Ruang --</option>
-              {locations.map(l => <option key={l.id_lokasi} value={l.id_lokasi}>{l.lokasi_pelatihan}</option>)}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-slate-400 mb-1">Tanggal Pelatihan</label>
-            <input type="date" required value={tanggal} onChange={e => setTanggal(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none" />
-          </div>
-
-          <div className="grid grid-cols-2 gap-2">
+        
+        {/* RENDER FORM HANYA JIKA BUKAN SPV */}
+        {!isSpv ? (
+          <form onSubmit={handleCreateJadwal} className="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-4 h-fit">
+            <h3 className="font-bold text-sky-400 text-xs uppercase font-mono tracking-wider">Plot Sesi Baru</h3>
             <div>
-              <label className="block text-xs font-semibold text-slate-400 mb-1">Waktu Mulai</label>
-              <input type="time" required value={waktuMulai} onChange={e => setWaktuMulai(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none" />
+              <label className="block text-xs font-semibold text-slate-400 mb-1">Nama / Jenis Pelatihan</label>
+              <select required value={idPelatihan} onChange={e => setIdPelatihan(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none">
+                <option value="">-- Pilih Jenis --</option>
+                {types.map(t => <option key={t.id_pelatihan} value={t.id_pelatihan}>{t.nama_pelatihan}</option>)}
+              </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-400 mb-1">Waktu Selesai</label>
-              <input type="time" required value={waktuSelesai} onChange={e => setWaktuSelesai(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none" />
+              <label className="block text-xs font-semibold text-slate-400 mb-1">Assign Trainer</label>
+              <select required value={idTrainer} onChange={e => setIdTrainer(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none">
+                <option value="">-- Pilih Trainer --</option>
+                {trainers.map(tr => <option key={tr.id_trainer} value={tr.id_trainer}>{tr.nama_trainer}</option>)}
+              </select>
             </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-400 mb-1">Lokasi Pelatihan</label>
+              <select required value={idLokasi} onChange={e => setIdLokasi(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none">
+                <option value="">-- Pilih Ruang --</option>
+                {locations.map(l => <option key={l.id_lokasi} value={l.id_lokasi}>{l.lokasi_pelatihan}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-400 mb-1">Tanggal Pelatihan</label>
+              <input type="date" required value={tanggal} onChange={e => setTanggal(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none" />
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <label className="block text-xs font-semibold text-slate-400 mb-1">Waktu Mulai</label>
+                <input type="time" required value={waktuMulai} onChange={e => setWaktuMulai(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none" />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-400 mb-1">Waktu Selesai</label>
+                <input type="time" required value={waktuSelesai} onChange={e => setWaktuSelesai(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none" />
+              </div>
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-400 mb-1">Biaya Investasi (Rp)</label>
+              <input type="number" required placeholder="Nominal Anggaran" value={biaya} onChange={e => setBiaya(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none" />
+            </div>
+            <button type="submit" className="w-full bg-sky-500 text-slate-950 py-2.5 rounded-lg font-bold text-sm hover:bg-sky-400 cursor-pointer flex items-center justify-center space-x-1">
+              <Plus className="w-4 h-4" /> <span>Rilis Jadwal</span>
+            </button>
+          </form>
+        ) : (
+          /* JIKA SPV: Berikan Banner Informasi Read-Only */
+          <div className="bg-slate-800 p-5 rounded-xl border border-slate-700 h-fit space-y-2">
+            <h4 className="text-xs font-bold font-mono text-amber-400 uppercase tracking-wide">Akses Pengawas SPV</h4>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Anda berada di panel pengawasan jadwal diklat. Anda dapat meninjau rincian sesi, jam pelaksanaan, sisa durasi pelatihan, dan manifest karyawan terdaftar tanpa hak mengubah struktur jadwal.
+            </p>
           </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-slate-400 mb-1">Biaya Investasi (Rp)</label>
-            <input type="number" required placeholder="Nominal Anggaran" value={biaya} onChange={e => setBiaya(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none" />
-          </div>
-
-          <button type="submit" className="w-full bg-sky-500 text-slate-950 py-2.5 rounded-lg font-bold text-sm hover:bg-sky-400 cursor-pointer flex items-center justify-center space-x-1">
-            <Plus className="w-4 h-4" /> <span>Rilis Jadwal</span>
-          </button>
-        </form>
+        )}
 
         {/* Tabel Data Master Jadwal */}
         <div className="lg:col-span-2 bg-slate-800 rounded-xl border border-slate-700 overflow-hidden h-fit">
@@ -337,7 +344,7 @@ const handleRemovePeserta = async (pernerPeserta: string) => {
                     <td className="p-3 font-mono text-xs text-slate-500 font-bold">{s.id_jadwal}</td>
                     
                     <td className="p-3">
-                      {editingId === s.id_jadwal ? (
+                      {editingId === s.id_jadwal && !isSpv ? (
                         <select value={editFields.id_pelatihan || ''} onChange={e => setEditFields({...editFields, id_pelatihan: e.target.value})} className="bg-slate-900 text-white p-1 rounded text-xs w-full">
                           {types.map(t => <option key={t.id_pelatihan} value={t.id_pelatihan}>{t.nama_pelatihan}</option>)}
                         </select>
@@ -347,7 +354,7 @@ const handleRemovePeserta = async (pernerPeserta: string) => {
                     </td>
 
                     <td className="p-3 text-xs font-mono">
-                      {editingId === s.id_jadwal ? (
+                      {editingId === s.id_jadwal && !isSpv ? (
                         <div className="space-y-1">
                           <input type="date" value={editFields.tanggal_pelatihan || ''} onChange={e => setEditFields({...editFields, tanggal_pelatihan: e.target.value})} className="bg-slate-900 text-white p-0.5 rounded text-xs block w-full" />
                           <div className="flex space-x-1">
@@ -364,7 +371,7 @@ const handleRemovePeserta = async (pernerPeserta: string) => {
                     </td>
 
                     <td className="p-3 font-mono text-xs text-emerald-400">
-                      {editingId === s.id_jadwal ? (
+                      {editingId === s.id_jadwal && !isSpv ? (
                         <input type="number" value={editFields.biaya || ''} onChange={e => setEditFields({...editFields, biaya: e.target.value})} className="bg-slate-900 text-white p-1 rounded text-xs w-20" />
                       ) : (
                         `Rp ${Number(s.biaya || 0).toLocaleString('id-ID')}`
@@ -372,16 +379,22 @@ const handleRemovePeserta = async (pernerPeserta: string) => {
                     </td>
 
                     <td className="p-3 text-center">
-                      {editingId === s.id_jadwal ? (
+                      {editingId === s.id_jadwal && !isSpv ? (
                         <div className="flex justify-center space-x-2">
                           <button onClick={() => handleUpdateJadwal(s.id_jadwal)} className="text-emerald-400 hover:text-emerald-500 cursor-pointer"><Check className="w-4 h-4" /></button>
                           <button onClick={() => setEditingId(null)} className="text-slate-400 hover:text-slate-500 cursor-pointer"><X className="w-4 h-4" /></button>
                         </div>
                       ) : (
                         <div className="flex justify-center space-x-2">
-                          <button onClick={() => viewAndManagePeserta(s.id_jadwal, s.type_pelatihan?.nama_pelatihan || s.id_pelatihan)} className="text-sky-400 hover:text-sky-300 cursor-pointer" title="Kelola Peserta Kelas"><Users className="w-4 h-4" /></button>
-                          <button onClick={() => setEditingId(s.id_jadwal)} className="text-amber-400 hover:text-amber-500 cursor-pointer"><Edit2 className="w-4 h-4" /></button>
-                          <button onClick={() => handleDelete(s.id_jadwal)} className="text-red-400 hover:text-red-500 cursor-pointer"><Trash2 className="w-4 h-4" /></button>
+                          <button onClick={() => viewAndManagePeserta(s.id_jadwal, s.type_pelatihan?.nama_pelatihan || s.id_pelatihan)} className="text-sky-400 hover:text-sky-300 cursor-pointer" title="Lihat Manifest Karyawan"><Users className="w-4 h-4" /></button>
+                          
+                          {/* Sembunyikan tombol Edit & Delete khusus untuk akun SPV */}
+                          {!isSpv && (
+                            <>
+                              <button onClick={() => { setEditingId(s.id_jadwal); setEditFields({ ...s, waktu_mulai: s.waktu_mulai?.slice(0,5), waktu_selesai: s.waktu_selesai?.slice(0,5) }); }} className="text-amber-400 hover:text-amber-500 cursor-pointer"><Edit2 className="w-4 h-4" /></button>
+                              <button onClick={() => handleDelete(s.id_jadwal)} className="text-red-400 hover:text-red-500 cursor-pointer"><Trash2 className="w-4 h-4" /></button>
+                            </>
+                          )}
                         </div>
                       )}
                     </td>
@@ -393,7 +406,7 @@ const handleRemovePeserta = async (pernerPeserta: string) => {
         </div>
       </div>
 
-      {/* POP-UP MODAL INTERAKTIF: KELOLA & ASSIGN KARYAWAN */}
+      {/* POP-UP MODAL INTERAKTIF: REKAP MANIFEST KARYAWAN */}
       {modalOpen && (
         <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-slate-800 border border-slate-700 rounded-xl w-full max-w-3xl overflow-hidden shadow-2xl">
@@ -402,19 +415,25 @@ const handleRemovePeserta = async (pernerPeserta: string) => {
               <button onClick={() => setModalOpen(false)} className="text-slate-400 hover:text-white cursor-pointer"><X className="w-5 h-5" /></button>
             </div>
             
-            {/* Form Assign Karyawan Baru */}
-            <form onSubmit={handleAssignPeserta} className="p-4 bg-slate-900/40 border-b border-slate-700/60 flex items-end space-x-3">
-              <div className="flex-1">
-                <label className="block text-[11px] font-semibold text-slate-400 mb-1 uppercase font-mono">Pilih Karyawan untuk Dimasukkan Kelas</label>
-                <select required value={selectedPernerToAssign} onChange={e => setSelectedPernerToAssign(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none">
-                  <option value="">-- Cari Nama Karyawan --</option>
-                  {allPeserta.map(p => <option key={p.perner} value={p.perner}>{p.perner} - {p.nama_peserta}</option>)}
-                </select>
+            {/* Form Assign Karyawan Baru: Hanya muncul jika BUKAN SPV */}
+            {!isSpv ? (
+              <form onSubmit={handleAssignPeserta} className="p-4 bg-slate-900/40 border-b border-slate-700/60 flex items-end space-x-3">
+                <div className="flex-1">
+                  <label className="block text-[11px] font-semibold text-slate-400 mb-1 uppercase font-mono">Pilih Karyawan untuk Dimasukkan Kelas</label>
+                  <select required value={selectedPernerToAssign} onChange={e => setSelectedPernerToAssign(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none">
+                    <option value="">-- Cari Nama Karyawan --</option>
+                    {allPeserta.map(p => <option key={p.perner} value={p.perner}>{p.perner} - {p.nama_peserta}</option>)}
+                  </select>
+                </div>
+                <button type="submit" className="bg-sky-500 text-slate-950 px-4 py-2 rounded-lg font-bold text-xs hover:bg-sky-400 cursor-pointer flex items-center space-x-1 h-fit">
+                  <UserPlus className="w-3.5 h-3.5" /> <span>Assign</span>
+                </button>
+              </form>
+            ) : (
+              <div className="p-3 bg-slate-900/20 border-b border-slate-700/40 text-[11px] font-mono text-slate-400">
+                📌 Daftar manifest karyawan terdaftar di bawah ini bersifat tetap (Read-Only).
               </div>
-              <button type="submit" className="bg-sky-500 text-slate-950 px-4 py-2 rounded-lg font-bold text-xs hover:bg-sky-400 cursor-pointer flex items-center space-x-1 h-fit">
-                <UserPlus className="w-3.5 h-3.5" /> <span>Assign</span>
-              </button>
-            </form>
+            )}
 
             {/* Manifest Karyawan Terdaftar */}
             <div className="p-4 max-h-[350px] overflow-y-auto">
@@ -429,7 +448,7 @@ const handleRemovePeserta = async (pernerPeserta: string) => {
                       <th className="p-2.5">PERNER</th>
                       <th className="p-2.5">Nama Karyawan</th>
                       <th className="p-2.5">Posisi</th>
-                      <th className="p-2.5 text-center">Aksi</th>
+                      {!isSpv && <th className="p-2.5 text-center">Aksi</th>}
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-700 text-slate-200">
@@ -438,6 +457,9 @@ const handleRemovePeserta = async (pernerPeserta: string) => {
                         <td className="p-2.5 font-mono text-sky-400">{p.perner}</td>
                         <td className="p-2.5 font-semibold">{p.nama_peserta}</td>
                         <td className="p-2.5 text-slate-400">{p.job_position}</td>
+                        
+                        {/* Kolom Unassign hanya muncul jika BUKAN SPV */}
+                        {!isSpv && (
                           <td className="p-2.5 text-center">
                             <button 
                               type="button" 
@@ -447,6 +469,7 @@ const handleRemovePeserta = async (pernerPeserta: string) => {
                               Unassign
                             </button>
                           </td>
+                        )}
                       </tr>
                     ))}
                   </tbody>

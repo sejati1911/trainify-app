@@ -1,54 +1,174 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
+import { Edit2, Trash2, X, RefreshCw } from 'lucide-react';
 
 export const UserSettings: React.FC = () => {
   const [usersList, setUsersList] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // States Input Form
+  // States Kontrol Mode Form
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingUsername, setEditingUsername] = useState<string | null>(null);
+  const [editingPerner, setEditingPerner] = useState<string | number | null>(null);
+
+  // States Input Form (Tabel access_login)
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('user');
+  const [role, setRole] = useState('User');
   const [perner, setPerner] = useState('');
+
+  // States Input Form Profil Karyawan (Tabel data_peserta)
   const [namaPeserta, setNamaPeserta] = useState('');
   const [jobPosition, setJobPosition] = useState('');
 
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
+      
+      // 1. Ambil data mentah akun login tanpa menggunakan sub-query join strict
+      const { data: accessData, error: errAccess } = await supabase
         .from('access_login')
-        .select(`
-          username, role, perner,
-          data_peserta (nama_peserta, job_position)
-        `);
-      if (error) throw error;
-      setUsersList(data || []);
+        .select('*');
+      if (errAccess) throw errAccess;
+
+      // 2. Ambil data induk peserta secara terpisah untuk dicocokkan di memori
+const { data: pesertaData } = await supabase
+  .from('data_peserta')
+  .select('perner, nama_peserta, job_position');
+      
+      const profilMap = pesertaData || [];
+
+      // 3. Satukan data di memori agar jika profil dihapus, data akun login TETAP MUNCUL
+      const combinedData = (accessData || []).map((u: any) => {
+        const matchProfil = profilMap.find(p => String(p.perner) === String(u.perner));
+        return {
+          ...u,
+          data_peserta: matchProfil || null // Jika profil dihapus, set null secara aman
+        };
+      });
+
+      setUsersList(combinedData);
     } catch (err) {
-      console.error(err);
+      console.error('Gagal memuat data pengguna:', err);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleCreateUser = async (e: React.FormEvent) => {
+  const resetForm = () => {
+    setIsEditing(false);
+    setEditingUsername(null);
+    setEditingPerner(null);
+    setUsername('');
+    setPassword('');
+    setRole('User');
+    setPerner('');
+    setNamaPeserta('');
+    setJobPosition('');
+  };
+
+  const handleSaveUser = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const { error: pError } = await supabase
-        .from('data_peserta')
-        .insert([{ perner, nama_peserta: namaPeserta, job_position: jobPosition, asal_perusahaan: 'PT. Indonesia Bangun Digital' }]);
-      if (pError) throw pError;
+      const parsedPerner = perner.trim() === '' ? null : (isNaN(Number(perner)) ? perner : Number(perner));
 
-      const { error: lError } = await supabase
-        .from('access_login')
-        .insert([{ username, password, role, perner }]);
-      if (lError) throw lError;
+      if (isEditing && editingUsername) {
+        // --- PROSES UPDATE / EDIT MODE ---
+        
+        // 1. Jika perner lama ada, coba update data di data_peserta
+        if (editingPerner && role === 'User') {
+          await supabase
+            .from('data_peserta')
+            .update({
+              perner: parsedPerner,
+              nama_peserta: namaPeserta,
+              job_position: jobPosition
+            })
+            .eq('perner', editingPerner);
+        }
 
-      alert('User berhasil didaftarkan!');
-      setUsername(''); setPassword(''); setPerner(''); setNamaPeserta(''); setJobPosition('');
+        // 2. Update kredensial login di access_login
+        const { error: lUpdateError } = await supabase
+          .from('access_login')
+          .update({
+            username: username,
+            password: password,
+            role: role,
+            perner: parsedPerner
+          })
+          .eq('username', editingUsername);
+
+        if (lUpdateError) throw lUpdateError;
+        alert('User berhasil diperbarui!');
+      } else {
+        // --- PROSES CREATE / ADD MODE ---
+        
+        // Jika rolenya User dan perner diisi, buat profilnya di data_peserta dulu
+        if (role === 'User' && parsedPerner) {
+          const { error: pError } = await supabase
+            .from('data_peserta')
+            .insert([{ 
+              perner: parsedPerner, 
+              nama_peserta: namaPeserta || 'Karyawan Baru', 
+              job_position: jobPosition || 'Staff IT', 
+              asal_perusahaan: 'PT. Indonesia Bangun Digital',
+              gender: 'Laki-laki',
+              lokasi_perusahaan: 'Pusat'
+            }]);
+          if (pError) console.warn("Peringatan profil: Kemungkinan perner sudah ada di database peserta.", pError.message);
+        }
+
+        // Daftarkan kredensial login ke tabel access_login
+        const { error: lError } = await supabase
+          .from('access_login')
+          .insert([{ username, password, role, perner: parsedPerner }]);
+        if (lError) throw lError;
+
+        alert('User berhasil didaftarkan!');
+      }
+
+      resetForm();
       fetchUsers();
     } catch (err: any) {
-      alert(err.message);
+      alert('Gagal menyimpan data: ' + err.message);
+    }
+  };
+
+  const startEditUser = (u: any) => {
+    setIsEditing(true);
+    setEditingUsername(u.username);
+    setEditingPerner(u.perner);
+
+    setUsername(u.username);
+    setPassword(u.password || '');
+    setRole(u.role || 'User');
+    setPerner(u.perner ? String(u.perner) : '');
+    setNamaPeserta(u.data_peserta?.nama_peserta || '');
+    setJobPosition(u.data_peserta?.job_position || '');
+  };
+
+  const handleDeleteUser = async (u: any) => {
+    if (!confirm(`Hapus akun login '${u.username}' secara permanen?`)) return;
+    try {
+      // 1. Hapus data kredensial login di access_login
+      const { error: lDelError } = await supabase
+        .from('access_login')
+        .delete()
+        .eq('username', u.username);
+      if (lDelError) throw lDelError;
+
+      // 2. Tawarkan hapus data peserta terikat jika profilnya ada
+      if (u.perner && confirm(`Apakah Anda juga ingin menghapus profil karyawan dengan PERNER ${u.perner} di data_peserta?`)) {
+        await supabase
+          .from('data_peserta')
+          .delete()
+          .eq('perner', u.perner);
+      }
+
+      alert('Proses hapus sukses dieksekusi!');
+      fetchUsers();
+    } catch (err: any) {
+      alert('Gagal menghapus data: ' + err.message);
     }
   };
 
@@ -58,49 +178,129 @@ export const UserSettings: React.FC = () => {
 
   return (
     <div className="p-6 text-white space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-sky-400">Manajemen Pengguna</h1>
-        <p className="text-sm text-slate-400 font-mono">Registrasi Otorisasi Akun & Profil Karyawan</p>
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold text-sky-400">User Settings</h1>
+          <p className="text-sm text-slate-400 font-mono">Registrasi Otorisasi Akun & Profil Karyawan Terintegrasi</p>
+        </div>
+        <button onClick={fetchUsers} disabled={loading} className="p-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-slate-300 cursor-pointer">
+          <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+        </button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <form onSubmit={handleCreateUser} className="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-3 h-fit">
-          <input type="text" required placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white" />
-          <input type="password" required placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white" />
-          <select value={role} onChange={e => setRole(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white">
-            <option value="user">User</option>
-            <option value="admin">Admin</option>
-          </select>
-          <input type="text" required placeholder="PERNER" value={perner} onChange={e => setPerner(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white" />
-          <input type="text" required placeholder="Nama Lengkap" value={namaPeserta} onChange={e => setNamaPeserta(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white" />
-          <input type="text" required placeholder="Jabatan" value={jobPosition} onChange={e => setJobPosition(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white" />
-          <button type="submit" className="w-full bg-sky-500 text-slate-950 py-2 rounded-lg font-bold text-xs hover:bg-sky-400 cursor-pointer">
-            Daftarkan Akun
+        
+        {/* FORM OPERASIONAL */}
+        <form onSubmit={handleSaveUser} className="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-3 h-fit">
+          <div className="flex justify-between items-center border-b border-slate-700/50 pb-2">
+            <h3 className="font-bold text-sky-400 text-xs uppercase font-mono tracking-wider">
+              {isEditing ? 'Koreksi Data Akun' : 'Daftarkan Akun Baru'}
+            </h3>
+            {isEditing && (
+              <button type="button" onClick={resetForm} className="text-slate-400 hover:text-white cursor-pointer"><X className="w-4 h-4" /></button>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-[11px] font-semibold text-slate-400 mb-1">USERNAME</label>
+            <input type="text" required placeholder="Username Akun" value={username} onChange={e => setUsername(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none" />
+          </div>
+
+          <div>
+            <label className="block text-[11px] font-semibold text-slate-400 mb-1">PASSWORD</label>
+            <input type="password" required placeholder="Password Akun" value={password} onChange={e => setPassword(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none" />
+          </div>
+
+          <div>
+            <label className="block text-[11px] font-semibold text-slate-400 mb-1">HAK AKSES ROLE</label>
+            <select value={role} onChange={e => setRole(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none">
+              <option value="User">User</option>
+              <option value="Admin">Admin</option>
+              <option value="SPV">SPV</option>
+            </select>
+          </div>
+
+          <div className="border-t border-slate-700/60 pt-2 space-y-3">
+            <p className="text-[10px] font-bold font-mono text-amber-400 uppercase tracking-wide">📦 Sinkronisasi Profil Karyawan</p>
+            
+            <div>
+              <label className="block text-[10px] text-slate-400 mb-0.5">NOMOR PERNER</label>
+              <input type="text" required placeholder="Contoh: 112311" value={perner} onChange={e => setPerner(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none" />
+            </div>
+
+            <div>
+              <label className="block text-[10px] text-slate-400 mb-0.5">NAMA LENGKAP</label>
+              <input type="text" placeholder="Nama Lengkap Karyawan" value={namaPeserta} onChange={e => setNamaPeserta(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none" />
+            </div>
+
+            <div>
+              <label className="block text-[10px] text-slate-400 mb-0.5">JABATAN</label>
+              <input type="text" placeholder="IT Support / Engineer" value={jobPosition} onChange={e => setJobPosition(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none" />
+            </div>
+          </div>
+
+          <button type="submit" className="w-full bg-sky-500 text-slate-950 py-2.5 rounded-lg font-bold text-xs hover:bg-sky-400 transition-all cursor-pointer">
+            {isEditing ? 'Simpan Pembaruan User' : 'Daftarkan Akun'}
           </button>
         </form>
 
+        {/* TABEL DATA MANAJEMEN USER */}
         <div className="lg:col-span-2 bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
-          {loading ? <p className="p-4 text-xs">Loading...</p> : (
-            <table className="w-full text-left text-xs">
-              <thead className="bg-slate-850 text-slate-400 font-mono">
-                <tr>
-                  <th className="p-3">Username</th>
-                  <th className="p-3">Nama</th>
-                  <th className="p-3">Role</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-700 text-slate-200">
-                {usersList.map(u => (
-                  <tr key={u.username} className="hover:bg-slate-750/20">
-                    <td className="p-3 font-mono">{u.username}</td>
-                    <td className="p-3 font-semibold text-sky-400">{u.data_peserta?.nama_peserta || '-'}</td>
-                    <td className="p-3 uppercase font-mono text-slate-400">{u.role}</td>
+          {loading ? (
+            <p className="p-4 text-xs font-mono text-slate-500 animate-pulse">Menyelaraskan data...</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-slate-850 text-slate-400 font-mono border-b border-slate-700">
+                  <tr>
+                    <th className="p-3">Username</th>
+                    <th className="p-3">PERNER</th>
+                    <th className="p-3">Nama Karyawan</th>
+                    <th className="p-3">Role</th>
+                    <th className="p-3 text-center">Aksi</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-slate-700 text-slate-200">
+                  {usersList.length === 0 ? (
+                    <tr><td colSpan={5} className="p-4 text-center text-slate-500 font-mono">Belum ada akun terdaftar.</td></tr>
+                  ) : (
+                    usersList.map(u => (
+                      <tr key={u.username} className="hover:bg-slate-750/20 transition-colors">
+                        <td className="p-3 font-mono font-medium text-slate-300">{u.username}</td>
+                        <td className="p-3 font-mono text-slate-400">{u.perner || '-'}</td>
+                        <td className="p-3 font-semibold text-sky-400">
+                          {u.data_peserta?.nama_peserta || (
+                            <span className="text-amber-500 text-[11px] font-mono border border-amber-500/20 bg-amber-500/5 px-1.5 py-0.5 rounded">
+                              ⚠️ Profil Terhapus
+                            </span>
+                          )}
+                        </td>
+                        <td className="p-3">
+                          <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold font-mono ${
+                            u.role === 'Admin' || u.role === 'admin' ? 'bg-red-500/10 text-red-400' : u.role === 'SPV' || u.role === 'spv' ? 'bg-amber-500/10 text-amber-400' : 'bg-sky-500/10 text-sky-400'
+                          }`}>
+                            {u.role}
+                          </span>
+                        </td>
+                        <td className="p-3">
+                          <div className="flex justify-center items-center space-x-3">
+                            <button type="button" onClick={() => startEditUser(u)} className="text-amber-400 hover:text-amber-500 cursor-pointer" title="Edit Akun & Profil">
+                              <Edit2 className="w-3.5 h-3.5" />
+                            </button>
+                            <button type="button" onClick={() => handleDeleteUser(u)} className="text-red-400 hover:text-red-500 cursor-pointer" title="Hapus User">
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
+
       </div>
     </div>
   );

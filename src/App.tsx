@@ -8,7 +8,7 @@ import { DashboardAdmin } from './pages/DashboardAdmin';
 import { DataPeserta } from './pages/DataPeserta';
 import { ManajemenMaster } from './pages/ManajemenMaster';
 import { JadwalPelatihan } from './pages/JadwalPelatihan';
-import { ManajemenPenilaian } from './pages/ManajemenPenilaian'; // Menggunakan nama komponen baru Anda
+import { ManajemenPenilaian } from './pages/ManajemenPenilaian'; 
 import { UserSettings } from './pages/UserSettings';
 
 // Impor Halaman Operasional Sisi Karyawan / User
@@ -21,10 +21,16 @@ export const App: React.FC = () => {
   const { user, logout, loading } = useAuth();
   const [activePage, setActivePage] = useState<string>('dashboardAdmin');
 
-  // Menentukan routing default awal pasca-login berdasarkan role akun
+  // MENYELARASKAN ROUTING DEFAULT AWAL PASCA-LOGIN UNTUK 3 ROLE
   useEffect(() => {
     if (user) {
-      setActivePage(user.role === 'admin' ? 'dashboardAdmin' : 'dashboardUser');
+      const role = user.role ? String(user.role).toLowerCase() : 'user';
+      // Jika role adalah admin atau spv, arahkan ke dashboard analitik (dashboardAdmin)
+      if (role === 'admin' || role === 'spv') {
+        setActivePage('dashboardAdmin');
+      } else {
+        setActivePage('dashboardUser');
+      }
     }
   }, [user]);
 
@@ -43,7 +49,7 @@ export const App: React.FC = () => {
   // Router internal pemetaan menu sidebar menuju render halaman utama
   const renderContent = () => {
     switch (activePage) {
-      // BLOK NAVIGASI SISI ADMIN
+      // BLOK NAVIGASI SISI ADMIN & MONITORING SPV (Menggunakan komponen yang sama tanpa mengubah nama)
       case 'dashboardAdmin': return <DashboardAdmin />;
       case 'peserta':        return <DataPeserta />;
       case 'master':         return <ManajemenMaster />;

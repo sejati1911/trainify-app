@@ -1,7 +1,7 @@
 import React from 'react';
 import { 
   Library, Calendar, Award, Settings, LogOut, 
-    LayoutDashboard, Users 
+  LayoutDashboard, Users 
 } from 'lucide-react';
 
 interface SidebarLayoutProps {
@@ -19,8 +19,12 @@ export const SidebarLayout: React.FC<SidebarLayoutProps> = ({
   logout, 
   children 
 }) => {
-  // Pengecekan role yang aman dari case-sensitive dan null-data
-  const isAdmin = user && String(user.role).toLowerCase() === 'admin';
+  // Ambil role secara aman dan konversi ke lowercase
+  const currentRole = user && user.role ? String(user.role).toLowerCase() : 'user';
+  
+  const isAdmin = currentRole === 'admin';
+  const isSpv = currentRole === 'spv';
+  const isUser = currentRole === 'user';
 
   // Helper styling untuk keaktifan tombol menu
   const linkStyle = (pageName: string) => {
@@ -45,10 +49,10 @@ export const SidebarLayout: React.FC<SidebarLayoutProps> = ({
           </div>
 
           <nav className="space-y-1">
-            {isAdmin ? (
-              /* KELOMPOK MENU JIKA HAK AKSES = ADMIN */
+            {/* ==================== 1. GRUP MENU ADMIN ==================== */}
+            {isAdmin && (
               <>
-                <div className="px-2 py-2 text-[10px] font-mono text-slate-500 uppercase tracking-wider">Otoritas Admin</div>
+                <div className="px-2 py-2 text-[10px] font-mono text-slate-500 uppercase tracking-wider">Otoritas Master Admin</div>
                 <button onClick={() => setActivePage('dashboardAdmin')} className={linkStyle('dashboardAdmin')}>
                   <LayoutDashboard className="w-4 h-4" /> <span>Dashboard Admin</span>
                 </button>
@@ -65,8 +69,29 @@ export const SidebarLayout: React.FC<SidebarLayoutProps> = ({
                   <Award className="w-4 h-4" /> <span>Manajemen Penilaian</span>
                 </button>
               </>
-            ) : (
-              /* KELOMPOK MENU JIKA HAK AKSES = USER / KARYAWAN BIASA */
+            )}
+
+            {/* ==================== 2. GRUP MENU SUPERVISOR (SPV) ==================== */}
+            {isSpv && (
+              <>
+                <div className="px-2 py-2 text-[10px] font-mono text-amber-500 uppercase tracking-wider">Monitoring SPV</div>
+                <button onClick={() => setActivePage('dashboardAdmin')} className={linkStyle('dashboardAdmin')}>
+                  <LayoutDashboard className="w-4 h-4" /> <span>Dashboard Analitik</span>
+                </button>
+                <button onClick={() => setActivePage('peserta')} className={linkStyle('peserta')}>
+                  <Users className="w-4 h-4" /> <span>Monitoring Karyawan</span>
+                </button>
+                <button onClick={() => setActivePage('jadwal')} className={linkStyle('jadwal')}>
+                  <Calendar className="w-4 h-4" /> <span>Monitoring Jadwal</span>
+                </button>
+                <button onClick={() => setActivePage('penilaian')} className={linkStyle('penilaian')}>
+                  <Award className="w-4 h-4" /> <span>Monitoring Penilaian</span>
+                </button>
+              </>
+            )}
+
+            {/* ==================== 3. GRUP MENU USER / KARYAWAN ==================== */}
+            {isUser && (
               <>
                 <div className="px-2 py-2 text-[10px] font-mono text-slate-500 uppercase tracking-wider">Akses Karyawan</div>
                 <button onClick={() => setActivePage('dashboardUser')} className={linkStyle('dashboardUser')}>
@@ -88,7 +113,7 @@ export const SidebarLayout: React.FC<SidebarLayoutProps> = ({
 
         {/* CONTROLLER SEKTOR BAWAH */}
         <div className="space-y-3.5 pt-2 border-t border-slate-800/80">
-          {/* User Settings hanya tampil di bawah untuk Admin */}
+          {/* Menu pengaturan pengguna (hanya bisa diakses oleh Master Admin) */}
           {isAdmin && (
             <button 
               onClick={() => setActivePage('settings')} 
@@ -109,7 +134,7 @@ export const SidebarLayout: React.FC<SidebarLayoutProps> = ({
                 {user?.username?.slice(0, 2) || 'US'}
               </div>
               <div className="overflow-hidden">
-                <p className="text-[9px] text-slate-500 font-mono uppercase tracking-tighter">Masuk Sebagai:</p>
+                <p className="text-[9px] text-slate-500 font-mono uppercase tracking-tighter">Role: {currentRole}</p>
                 <p className="text-xs font-bold text-slate-200 truncate font-mono">{user?.username || 'Guest'}</p>
               </div>
             </div>
