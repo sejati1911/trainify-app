@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
+import bcrypt from 'bcryptjs'; // <-- Impor bcrypt untuk mengamankan enkripsi password
 import { Edit2, Trash2, X, RefreshCw } from 'lucide-react';
 
 export const UserSettings: React.FC = () => {
@@ -25,25 +26,25 @@ export const UserSettings: React.FC = () => {
     try {
       setLoading(true);
       
-      // 1. Ambil data mentah akun login tanpa menggunakan sub-query join strict
+      // 1. Ambil data mentah akun login
       const { data: accessData, error: errAccess } = await supabase
         .from('access_login')
         .select('*');
       if (errAccess) throw errAccess;
 
-      // 2. Ambil data induk peserta secara terpisah untuk dicocokkan di memori
-const { data: pesertaData } = await supabase
-  .from('data_peserta')
-  .select('perner, nama_peserta, job_position');
+      // 2. Ambil data induk peserta secara terpisah
+      const { data: pesertaData } = await supabase
+        .from('data_peserta')
+        .select('perner, nama_peserta, job_position');
       
       const profilMap = pesertaData || [];
 
-      // 3. Satukan data di memori agar jika profil dihapus, data akun login TETAP MUNCUL
+      // 3. Satukan data di memori secara aman
       const combinedData = (accessData || []).map((u: any) => {
         const matchProfil = profilMap.find(p => String(p.perner) === String(u.perner));
         return {
           ...u,
-          data_peserta: matchProfil || null // Jika profil dihapus, set null secara aman
+          data_peserta: matchProfil || null
         };
       });
 
@@ -72,10 +73,14 @@ const { data: pesertaData } = await supabase
     try {
       const parsedPerner = perner.trim() === '' ? null : (isNaN(Number(perner)) ? perner : Number(perner));
 
+      // 🌟 PROSES ENKRIPSI PASSWORD SEBELUM DIKIRIM KE SUPABASE
+      // Menggunakan salt rounds sebesar 10 (standar keamanan optimal)
+      const hashedPassword = await bcrypt.hash(password, 10);
+
       if (isEditing && editingUsername) {
         // --- PROSES UPDATE / EDIT MODE ---
         
-        // 1. Jika perner lama ada, coba update data di data_peserta
+        // 1. Jika perner lama ada, perbarui data di data_peserta
         if (editingPerner && role === 'User') {
           await supabase
             .from('data_peserta')
@@ -87,23 +92,27 @@ const { data: pesertaData } = await supabase
             .eq('perner', editingPerner);
         }
 
-        // 2. Update kredensial login di access_login
+        // 2. Update kredensial login di access_login dengan password ter-hash
         const { error: lUpdateError } = await supabase
           .from('access_login')
           .update({
             username: username,
-            password: password,
+            password: hashedPassword, // <-- Kirim password hasil hash
             role: role,
             perner: parsedPerner
           })
           .eq('username', editingUsername);
 
         if (lUpdateError) throw lUpdateError;
-        alert('User berhasil diperbarui!');
+        alert('User dan password baru berhasil diperbarui secara aman!');
       } else {
         // --- PROSES CREATE / ADD MODE ---
         
-        // Jika rolenya User dan perner diisi, buat profilnya di data_peserta dulu
+        // Cek duplikasi username di lokal state sebelum kirim ke database
+        const isExist = usersList.some(u => String(u.username).toLowerCase() === username.trim().toLowerCase());
+        if (isExist) return alert(`Username '${username}' sudah terdaftar di sistem!`);
+
+        // 1. Jika rolenya User dan perner diisi, buat profilnya di data_peserta dulu
         if (role === 'User' && parsedPerner) {
           const { error: pError } = await supabase
             .from('data_peserta')
@@ -115,16 +124,16 @@ const { data: pesertaData } = await supabase
               gender: 'Laki-laki',
               lokasi_perusahaan: 'Pusat'
             }]);
-          if (pError) console.warn("Peringatan profil: Kemungkinan perner sudah ada di database peserta.", pError.message);
+          if (pError) console.warn("Peringatan profil terduplikasi:", pError.message);
         }
 
-        // Daftarkan kredensial login ke tabel access_login
+        // 2. Daftarkan kredensial login ke tabel access_login dengan password ter-hash
         const { error: lError } = await supabase
           .from('access_login')
-          .insert([{ username, password, role, perner: parsedPerner }]);
+          .insert([{ username, password: hashedPassword, role, perner: parsedPerner }]); // <-- Simpan hashed password
         if (lError) throw lError;
 
-        alert('User berhasil didaftarkan!');
+        alert('Akun baru berhasil didaftarkan dengan password aman!');
       }
 
       resetForm();
@@ -140,7 +149,7 @@ const { data: pesertaData } = await supabase
     setEditingPerner(u.perner);
 
     setUsername(u.username);
-    setPassword(u.password || '');
+    setPassword(''); // Kosongkan form password demi keamanan saat edit, wajib isi ulang jika ganti data
     setRole(u.role || 'User');
     setPerner(u.perner ? String(u.perner) : '');
     setNamaPeserta(u.data_peserta?.nama_peserta || '');
@@ -181,7 +190,7 @@ const { data: pesertaData } = await supabase
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-sky-400">User Settings</h1>
-          <p className="text-sm text-slate-400 font-mono">Registrasi Otorisasi Akun & Profil Karyawan Terintegrasi</p>
+          <p className="text-sm text-slate-400 font-mono">Registrasi Otorisasi Akun & Profil Karyawan Terintegrasi (Enkripsi Bcrypt Active)</p>
         </div>
         <button onClick={fetchUsers} disabled={loading} className="p-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-slate-300 cursor-pointer">
           <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
@@ -207,8 +216,8 @@ const { data: pesertaData } = await supabase
           </div>
 
           <div>
-            <label className="block text-[11px] font-semibold text-slate-400 mb-1">PASSWORD</label>
-            <input type="password" required placeholder="Password Akun" value={password} onChange={e => setPassword(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none" />
+            <label className="block text-[11px] font-semibold text-slate-400 mb-1">PASSWORD {isEditing && '(Ketik Baru untuk Ubah)'}</label>
+            <input type="password" required placeholder="Ketik Password Baru" value={password} onChange={e => setPassword(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none" />
           </div>
 
           <div>

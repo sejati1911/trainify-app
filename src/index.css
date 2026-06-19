@@ -1,1 +1,62 @@
+/* ==========================================================================
+   TRAINIFY CORE STYLING (Tailwind CSS v4 Engine Murni)
+   ========================================================================== */
+
 @import "tailwindcss";
+
+/* 🌟 KUNCI TAILWIND v4 JALAN TANPA ERROR LINT: 
+   Memaksa pemetaan utilitas kelas gelap menggunakan standar native CSS Selector */
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+  
+  html.dark {
+    color-scheme: dark;
+  }
+}
+
+/* ==========================================================================
+   GAYA UTAMA LAYOUT ADAPTIF
+   ========================================================================== */
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  /* Membuat transisi warna layar menjadi sangat lembut saat switch diklik */
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+/* ==========================================================================
+   KUSTOMISASI SCROLLBAR ADAPTIF STANDAR
+   ========================================================================== */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Scrollbar default (Mode Terang) */
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Scrollbar otomatis berubah saat induk memiliki class="dark" */
+.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}

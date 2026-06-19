@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext'; // <-- Impor ThemeProvider Global
 import { SidebarLayout } from './components/SidebarLayout';
 import { Login } from './pages/Login';
 
@@ -17,7 +18,8 @@ import { JadwalUser } from './pages/JadwalUser';
 import { RiwayatPelatihan } from './pages/RiwayatPelatihan';
 import { HasilPenilaianUser } from './pages/HasilPenilaianUser';
 
-export const App: React.FC = () => {
+// Komponen Konten Utama Aplikasi (Memisahkan logic Router dari pembungkus Provider)
+const MainAppContent: React.FC = () => {
   const { user, logout, loading } = useAuth();
   const [activePage, setActivePage] = useState<string>('dashboardAdmin');
 
@@ -36,7 +38,7 @@ export const App: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="bg-slate-950 min-h-screen flex items-center justify-center text-slate-400 font-mono text-xs">
+      <div className="bg-white dark:bg-slate-950 min-h-screen flex items-center justify-center text-slate-800 dark:text-slate-400 font-mono text-xs transition-colors duration-300">
         Menginisialisasi otentikasi Trainify...
       </div>
     );
@@ -51,9 +53,9 @@ export const App: React.FC = () => {
     switch (activePage) {
       // BLOK NAVIGASI SISI ADMIN & MONITORING SPV (Menggunakan komponen yang sama tanpa mengubah nama)
       case 'dashboardAdmin': return <DashboardAdmin />;
-      case 'peserta':        return <DataPeserta />;
-      case 'master':         return <ManajemenMaster />;
-      case 'jadwal':         return <JadwalPelatihan />;
+      case 'peserta':         return <DataPeserta />;
+      case 'master':          return <ManajemenMaster />;
+      case 'jadwal':          return <JadwalPelatihan />;
       case 'penilaian':      return <ManajemenPenilaian />;
       case 'settings':       return <UserSettings />;
 
@@ -77,5 +79,14 @@ export const App: React.FC = () => {
     >
       {renderContent()}
     </SidebarLayout>
+  );
+};
+
+// Ekspor Utama App yang telah dibungkus dengan ThemeProvider
+export const App: React.FC = () => {
+  return (
+    <ThemeProvider>
+      <MainAppContent />
+    </ThemeProvider>
   );
 };
