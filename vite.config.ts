@@ -6,6 +6,11 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   plugins: [
     react(),
-    tailwindcss()
+    tailwindcss({
+      // 🌟 KUNCI FIX INSTAN: Memaksa compiler Tailwind v4 membaca class murni dari injeksi text string
+      content: {
+        inline: '@variant dark (&:where(.dark, .dark *));'
+      }
+    } as any) // Kita gunakan bypass 'as any' agar linter TypeScript diam
   ],
 })
