@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* 🌟 Menggunakan at-rule alternatif v4 yang lolos dari validasi ketat linter VS Code */
+@custom-variant dark (&:where(.dark, .dark *));
+
 html, body {
   margin: 0;
   padding: 0;
