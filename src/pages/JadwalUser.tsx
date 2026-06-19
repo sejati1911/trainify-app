@@ -91,7 +91,7 @@ const { data: scheduleData, error: schedError } = await supabase
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-sky-400">Jadwal Pelatihan Tersedia</h1>
-          <p className="text-sm text-slate-400">Pilih sesi aktif untuk memenuhi ambang batas 10 jam kompetensi tahunan Anda</p>
+          <p className="text-sm text-slate-400">Pilih sesi pelatihan yang tersedia</p>
         </div>
         <button onClick={fetchJadwalAndRegistrations} className="p-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-slate-300 transition-colors cursor-pointer">
           <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
@@ -117,7 +117,7 @@ const { data: scheduleData, error: schedError } = await supabase
                     <h3 className="font-bold text-base text-slate-100">{item.type_pelatihan?.nama_pelatihan}</h3>
                     <div className="space-y-1 text-xs text-slate-400 font-mono">
                       <p>🗓️ Tanggal: {item.tanggal_pelatihan}</p>
-                      <p>⏱️ Jam: {item.waktu_mulai?.slice(0,5)} - {item.waktu_selesai?.slice(0,5)} WIB</p>
+                      <p>⏱️ Waktu: {item.waktu_mulai?.slice(0,5)} - {item.waktu_selesai?.slice(0,5)} WIB</p>
                     </div>
                   </div>
 

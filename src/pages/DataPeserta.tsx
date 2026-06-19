@@ -145,10 +145,10 @@ export const DataPeserta: React.FC = () => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-sky-400">
-            {isSpv ? 'Monitoring Karyawan' : 'Data Karyawan & Akun'}
+            {isSpv ? 'Monitoring Karyawan' : 'Data Peserta & Akun'}
           </h1>
           <p className="text-sm text-slate-400">
-            {isSpv ? 'Mode Peninjau: Memantau database induk seluruh karyawan.' : 'Manajemen database karyawan sekaligus pendaftaran akun login otomatis.'}
+            {isSpv ? 'Mode Monitoring: Memantau data semua peserta.' : 'Manajemen peserta pelatihan dan pendaftaran akses login.'}
           </p>
         </div>
         <div className="flex space-x-2">
@@ -165,7 +165,7 @@ export const DataPeserta: React.FC = () => {
               className="flex items-center space-x-2 bg-sky-500 hover:bg-sky-400 text-slate-950 font-semibold px-4 py-2.5 rounded-lg text-sm cursor-pointer"
             >
               <UserPlus className="w-4 h-4" />
-              <span>{formOpen ? 'Tutup Form' : 'Tambah Karyawan + User'}</span>
+              <span>{formOpen ? 'Tutup' : 'Tambah Peserta + User'}</span>
             </button>
           )}
         </div>
@@ -175,7 +175,7 @@ export const DataPeserta: React.FC = () => {
       {!isSpv && formOpen && (
         <form onSubmit={handleAddPesertaDanUser} className="bg-slate-800 p-6 rounded-xl border border-slate-700 grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">PERNER (Sekaligus Username)</label>
+            <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">PERNER (Username)</label>
             <input type="text" required value={perner} onChange={e => setPerner(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none focus:border-sky-500" placeholder="Contoh: 18062026" />
           </div>
           <div>
@@ -207,7 +207,7 @@ export const DataPeserta: React.FC = () => {
               <input type="password" required value={passwordDefault} onChange={e => setPasswordDefault(e.target.value)} className="w-full bg-slate-900 border border-amber-500/30 rounded-lg p-2 text-sm text-white focus:outline-none focus:border-amber-400" placeholder="Ketik password awal akun karyawan..." />
             </div>
             <button type="submit" className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold p-2.5 rounded-lg text-sm transition-colors cursor-pointer flex items-center justify-center space-x-1">
-              <Plus className="w-4 h-4" /> <span>Daftarkan Profil + User</span>
+              <Plus className="w-4 h-4" /> <span>Tambah Peserta</span>
             </button>
           </div>
         </form>

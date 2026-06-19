@@ -60,7 +60,7 @@ export const RiwayatPelatihan: React.FC = () => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-sky-400">Riwayat Pelatihan</h1>
-          <p className="text-sm text-slate-400">Daftar rekaman kompetensi akademis dan status sertifikasi Anda</p>
+          <p className="text-sm text-slate-400">Daftar riwayat pelatihan Anda</p>
         </div>
         <button 
           onClick={fetchUserHistory} 
@@ -89,7 +89,7 @@ export const RiwayatPelatihan: React.FC = () => {
                 </tr>
               ) : history.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="p-6 text-center text-slate-500">Anda belum pernah terdaftar di kelas diklat manapun.</td>
+                  <td colSpan={5} className="p-6 text-center text-slate-500">Anda belum pernah terdaftar di jadwal pelatihan manapun.</td>
                 </tr>
               ) : (
                 history.map((row) => (

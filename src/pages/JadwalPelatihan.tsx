@@ -126,7 +126,7 @@ const handleUpdateJadwal = async (id: number) => {
       alert(`Gagal update: ${err.message}`);
     }
   };
-  
+
   const handleDelete = async (id: number) => {
     if (isSpv) return;
     if (!confirm('Hapus plot kelas terjadwal ini?')) return;
@@ -258,7 +258,7 @@ const handleUpdateJadwal = async (id: number) => {
             {isSpv ? 'Monitoring Jadwal' : 'Jadwal Pelatihan'}
           </h1>
           <p className="text-sm text-slate-400 font-mono">
-            {isSpv ? 'Mode Peninjau: Memantau plot durasi dan anggaran anggaran pelatihan korporat.' : 'Sequential Auto-ID • Durasi Otomatis • Peserta Monitoring'}
+            {isSpv ? 'Mode Monitoring : Memantau detail jadwal pelatihan.' : 'Penjadwalan pelatihan'}
           </p>
         </div>
         <button onClick={fetchAllData} className="p-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-slate-300 transition-colors cursor-pointer">
@@ -271,7 +271,7 @@ const handleUpdateJadwal = async (id: number) => {
         {/* RENDER FORM HANYA JIKA BUKAN SPV */}
         {!isSpv ? (
           <form onSubmit={handleCreateJadwal} className="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-4 h-fit">
-            <h3 className="font-bold text-sky-400 text-xs uppercase font-mono tracking-wider">Plot Sesi Baru</h3>
+            <h3 className="font-bold text-sky-400 text-xs uppercase font-mono tracking-wider">Detail Pelatihan</h3>
             <div>
               <label className="block text-xs font-semibold text-slate-400 mb-1">Nama / Jenis Pelatihan</label>
               <select required value={idPelatihan} onChange={e => setIdPelatihan(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none">
@@ -308,8 +308,8 @@ const handleUpdateJadwal = async (id: number) => {
               </div>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-400 mb-1">Biaya Investasi (Rp)</label>
-              <input type="number" required placeholder="Nominal Anggaran" value={biaya} onChange={e => setBiaya(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none" />
+              <label className="block text-xs font-semibold text-slate-400 mb-1">Biaya Pelatihan (Rp)</label>
+              <input type="number" required placeholder="Masukkan biaya pelatihan" value={biaya} onChange={e => setBiaya(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none" />
             </div>
             <button type="submit" className="w-full bg-sky-500 text-slate-950 py-2.5 rounded-lg font-bold text-sm hover:bg-sky-400 cursor-pointer flex items-center justify-center space-x-1">
               <Plus className="w-4 h-4" /> <span>Rilis Jadwal</span>
@@ -320,7 +320,7 @@ const handleUpdateJadwal = async (id: number) => {
           <div className="bg-slate-800 p-5 rounded-xl border border-slate-700 h-fit space-y-2">
             <h4 className="text-xs font-bold font-mono text-amber-400 uppercase tracking-wide">Akses Pengawas SPV</h4>
             <p className="text-xs text-slate-400 leading-relaxed">
-              Anda berada di panel pengawasan jadwal diklat. Anda dapat meninjau rincian sesi, jam pelaksanaan, sisa durasi pelatihan, dan manifest karyawan terdaftar tanpa hak mengubah struktur jadwal.
+              Anda berada di panel pengawasan jadwal pelatihan. Anda dapat meninjau rincian sesi, jam pelaksanaan, sisa durasi pelatihan, dan karyawan terdaftar tanpa hak mengubah struktur jadwal.
             </p>
           </div>
         )}
@@ -365,7 +365,7 @@ const handleUpdateJadwal = async (id: number) => {
                       ) : (
                         <>
                           <p>{s.tanggal_pelatihan}</p>
-                          <p className="text-slate-400 text-[11px]">{s.waktu_mulai?.slice(0,5)}-{s.waktu_selesai?.slice(0,5)} (⏱️ {s.durasi?.slice(0,5)})</p>
+                          <p className="text-slate-400 text-[11px]">{s.waktu_mulai?.slice(0,5)}-{s.waktu_selesai?.slice(0,5)} ({s.durasi?.slice(0,5)} jam)</p>
                         </>
                       )}
                     </td>
@@ -431,7 +431,7 @@ const handleUpdateJadwal = async (id: number) => {
               </form>
             ) : (
               <div className="p-3 bg-slate-900/20 border-b border-slate-700/40 text-[11px] font-mono text-slate-400">
-                📌 Daftar manifest karyawan terdaftar di bawah ini bersifat tetap (Read-Only).
+                Daftar peserta yang terdaftar di bawah ini bersifat tetap (Read-Only).
               </div>
             )}
 

@@ -162,10 +162,10 @@ export const DashboardAdmin: React.FC = () => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-sky-400">
-            {isSpv ? 'Dashboard Analitik Pengawas' : 'Dashboard Master Admin'}
+            {isSpv ? 'Dashboard Supervisor' : 'Dashboard Master Admin'}
           </h1>
           <p className="text-sm text-slate-400">
-            {isSpv ? 'Hak Pantau Manajerial: Ringkasan metrik pemenuhan KPI 10 jam diklat organisasi.' : 'Ringkasan metrik operasional dan data analitik Diklat Trainify'}
+            {isSpv ? 'Hak Monitoring: Ringkasan pemenuhan KPI 10 jam pelatihan karyawan.' : 'Ringkasan pemenuhan KPI 10 jam pelatihan karyawan'}
           </p>
         </div>
         {isSpv && (
@@ -192,7 +192,7 @@ export const DashboardAdmin: React.FC = () => {
             <div className="bg-slate-800 p-5 rounded-xl border border-slate-700 flex items-center space-x-4">
               <div className="p-3 bg-emerald-500/10 rounded-lg text-emerald-400"><Library className="w-5 h-5" /></div>
               <div>
-                <p className="text-[10px] text-slate-500 font-mono uppercase">Silabus Master</p>
+                <p className="text-[10px] text-slate-500 font-mono uppercase">Data Master</p>
                 <h3 className="text-2xl font-bold font-mono text-slate-100">{stats.totalMaster}</h3>
               </div>
             </div>
@@ -249,7 +249,7 @@ export const DashboardAdmin: React.FC = () => {
             <div className="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-4">
               <div className="flex items-center space-x-2 text-sky-400">
                 <PieChart className="w-4 h-4" />
-                <h4 className="text-xs font-bold uppercase font-mono tracking-wider">Komposisi Gender IT Unit</h4>
+                <h4 className="text-xs font-bold uppercase font-mono tracking-wider">Komposisi Gender Karyawan</h4>
               </div>
               <div className="grid grid-cols-2 gap-2 pt-2 text-center font-mono">
                 <div className="p-2.5 bg-slate-900/50 rounded-lg border border-slate-700/40">
@@ -347,9 +347,9 @@ export const DashboardAdmin: React.FC = () => {
             <div className="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-3">
               <h3 className="font-bold text-xs uppercase font-mono text-sky-400 tracking-wider">Panduan Prosedur Modul Master Admin</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-[11px] font-mono">
-                <div className="p-3 bg-slate-900/40 rounded-lg border border-slate-700/50"><span className="text-sky-400 font-bold block mb-0.5">01. Rilis Kelas</span><p className="text-slate-400 leading-relaxed">Daftarkan materi diklat baru di Manajemen Master, lalu tetapkan jadwal dan trainer di Jadwal Pelatihan.</p></div>
+                <div className="p-3 bg-slate-900/40 rounded-lg border border-slate-700/50"><span className="text-sky-400 font-bold block mb-0.5">01. Rilis Kelas</span><p className="text-slate-400 leading-relaxed">Daftarkan materi pelatihan baru di Manajemen Master, lalu tetapkan jadwal dan trainer di Jadwal Pelatihan.</p></div>
                 <div className="p-3 bg-slate-900/40 rounded-lg border border-slate-700/50"><span className="text-purple-400 font-bold block mb-0.5">02. Plotting Staff</span><p className="text-slate-400 leading-relaxed">Gunakan ikon tombol "Kelola Peserta" di daftar tabel jadwal untuk melakukan entri plotting karyawan.</p></div>
-                <div className="p-3 bg-slate-900/40 rounded-lg border border-slate-700/50"><span className="text-emerald-400 font-bold block mb-0.5">03. Verifikasi Nilai</span><p className="text-slate-400 leading-relaxed">Masukkan akumulasi skor ujian peserta di Manajemen Penilaian, lalu klik "Verify" untuk menutup masa diklat.</p></div>
+                <div className="p-3 bg-slate-900/40 rounded-lg border border-slate-700/50"><span className="text-emerald-400 font-bold block mb-0.5">03. Verifikasi Nilai</span><p className="text-slate-400 leading-relaxed">Masukkan akumulasi skor ujian peserta di Manajemen Penilaian, lalu klik "Verify" untuk menutup pelatihan.</p></div>
               </div>
             </div>
           )}

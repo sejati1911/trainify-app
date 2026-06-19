@@ -116,7 +116,7 @@ const handleAddTempat = async (e: React.FormEvent) => {
     <div className="p-6 space-y-6 text-white">
       <div>
         <h1 className="text-2xl font-bold text-sky-400">Manajemen Data Master</h1>
-        <p className="text-sm text-slate-400">Konfigurasi parameter dasar entitas penunjang kegiatan diklat</p>
+        <p className="text-sm text-slate-400">Konfigurasi parameter dasar pelatihan</p>
       </div>
 
       <div className="flex border border-slate-700 bg-slate-800 p-1 rounded-xl max-w-lg">
@@ -150,7 +150,7 @@ const handleAddTempat = async (e: React.FormEvent) => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <form onSubmit={handleAddType} className="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-4 h-fit">
             <h3 className="font-bold text-sky-400 text-sm uppercase font-mono">Tambah Macam Pelatihan</h3>
-            <input type="text" required placeholder="ID Pelatihan (e.g., K3-01)" value={idPelatihan} onChange={e => setIdPelatihan(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none" />
+            <input type="text" required placeholder="ID Pelatihan (contoh : 1)" value={idPelatihan} onChange={e => setIdPelatihan(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none" />
             <input type="text" required placeholder="Nama Pelatihan" value={namaPelatihan} onChange={e => setNamaPelatihan(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none" />
             
             <select value={k3} onChange={e => setK3(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none">
@@ -229,10 +229,10 @@ const handleAddTempat = async (e: React.FormEvent) => {
       {!loading && activeTab === 'trainer' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <form onSubmit={handleAddTrainer} className="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-4 h-fit">
-            <h3 className="font-bold text-sky-400 text-sm uppercase font-mono">Tambah Instruktur</h3>
+            <h3 className="font-bold text-sky-400 text-sm uppercase font-mono">Tambah Trainer</h3>
             <input type="text" required placeholder="Nama Trainer" value={namaTrainer} onChange={e => setNamaTrainer(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none" />
             <input type="text" required placeholder="Asal Instansi" value={asalTrainer} onChange={e => setAsalTrainer(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none" />
-            <button type="submit" className="w-full bg-sky-500 text-slate-950 py-2 rounded-lg font-bold text-sm hover:bg-sky-400 cursor-pointer">Simpan Master Trainer</button>
+            <button type="submit" className="w-full bg-sky-500 text-slate-950 py-2 rounded-lg font-bold text-sm hover:bg-sky-400 cursor-pointer">Simpan Trainer</button>
           </form>
           <div className="lg:col-span-2 bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
             <table className="w-full text-left">
@@ -278,9 +278,9 @@ const handleAddTempat = async (e: React.FormEvent) => {
       {!loading && activeTab === 'tempat' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <form onSubmit={handleAddTempat} className="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-4 h-fit">
-            <h3 className="font-bold text-sky-400 text-sm uppercase font-mono">Tambah Master Lokasi</h3>
+            <h3 className="font-bold text-sky-400 text-sm uppercase font-mono">Tambah Tempat Pelatihan</h3>
             <input type="text" required placeholder="Nama Ruang / Lokasi" value={lokasi} onChange={e => setLokasi(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none" />
-            <button type="submit" className="w-full bg-sky-500 text-slate-950 py-2 rounded-lg font-bold text-sm hover:bg-sky-400 cursor-pointer">Simpan Lokasi</button>
+            <button type="submit" className="w-full bg-sky-500 text-slate-950 py-2 rounded-lg font-bold text-sm hover:bg-sky-400 cursor-pointer">Simpan Tempat</button>
           </form>
           <div className="lg:col-span-2 bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
             <table className="w-full text-left">

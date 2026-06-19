@@ -48,7 +48,7 @@ export const SidebarLayout: React.FC<SidebarLayoutProps> = ({
         <div className="space-y-5 overflow-y-auto pr-1">
           <div className="px-2 py-1">
             <h2 className="text-xl font-black tracking-wider text-sky-500 dark:text-sky-400">TRAINIFY</h2>
-            <p className="text-[10px] font-mono text-slate-400 dark:text-slate-500 uppercase tracking-widest">Diklat System</p>
+            <p className="text-[10px] font-mono text-slate-400 dark:text-slate-500 uppercase tracking-widest">Training Activity Tracker</p>
           </div>
 
           <nav className="space-y-1">
@@ -79,10 +79,10 @@ export const SidebarLayout: React.FC<SidebarLayoutProps> = ({
               <>
                 <div className="px-2 py-2 text-[10px] font-mono text-amber-600 dark:text-amber-500 uppercase tracking-wider">Monitoring SPV</div>
                 <button onClick={() => setActivePage('dashboardAdmin')} className={linkStyle('dashboardAdmin')}>
-                  <LayoutDashboard className="w-4 h-4" /> <span>Dashboard Analitik</span>
+                  <LayoutDashboard className="w-4 h-4" /> <span>Dashboard</span>
                 </button>
                 <button onClick={() => setActivePage('peserta')} className={linkStyle('peserta')}>
-                  <Users className="w-4 h-4" /> <span>Monitoring Karyawan</span>
+                  <Users className="w-4 h-4" /> <span>Monitoring Peserta</span>
                 </button>
                 <button onClick={() => setActivePage('jadwal')} className={linkStyle('jadwal')}>
                   <Calendar className="w-4 h-4" /> <span>Monitoring Jadwal</span>
@@ -101,13 +101,13 @@ export const SidebarLayout: React.FC<SidebarLayoutProps> = ({
                   <LayoutDashboard className="w-4 h-4" /> <span>Dashboard User</span>
                 </button>
                 <button onClick={() => setActivePage('jadwalUser')} className={linkStyle('jadwalUser')}>
-                  <Calendar className="w-4 h-4" /> <span>Jadwal User</span>
+                  <Calendar className="w-4 h-4" /> <span>Jadwal Pelatihan</span>
                 </button>
                 <button onClick={() => setActivePage('riwayat')} className={linkStyle('riwayat')}>
                   <Award className="w-4 h-4" /> <span>Riwayat Pelatihan</span>
                 </button>
                 <button onClick={() => setActivePage('kelulusan')} className={linkStyle('kelulusan')}>
-                  <Award className="w-4 h-4" /> <span>Hasil Penilaian User</span>
+                  <Award className="w-4 h-4" /> <span>Hasil Penilaian</span>
                 </button>
               </>
             )}

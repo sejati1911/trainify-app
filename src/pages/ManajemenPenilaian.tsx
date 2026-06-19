@@ -165,7 +165,7 @@ export const ManajemenPenilaian: React.FC = () => {
         <div>
           <h1 className="text-2xl font-bold text-sky-400">Manajemen Penilaian</h1>
           <p className="text-sm text-slate-400">
-            {isSpv ? 'Mode Monitoring: Menampilkan rekapitulasi penilaian diklat organisasi.' : 'Sinkronisasi parameter nilai, konversi grade, dan aksi verifikasi kelulusan diklat.'}
+            {isSpv ? 'Mode Monitoring: Menampilkan rekapitulasi penilaian dari hasil pelatihan.' : 'Sinkronisasi parameter nilai, konversi grade, dan aksi verifikasi kelulusan pelatihan.'}
           </p>
         </div>
         <button onClick={fetchAllData} disabled={loading} className="p-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-slate-300 cursor-pointer disabled:opacity-50">
@@ -250,7 +250,7 @@ export const ManajemenPenilaian: React.FC = () => {
           <div className="bg-slate-900/40 p-5 rounded-xl border border-slate-800/80 h-fit space-y-2">
             <h4 className="text-xs font-bold font-mono text-amber-400 uppercase tracking-wide">Akses Terbatas Supervisor</h4>
             <p className="text-xs text-slate-400 leading-relaxed font-sans">
-              Anda masuk dengan hak pengawas. Anda dapat memantau seluruh nilai ujian, kategori indeks kelulusan, serta data kedinasan karyawan secara real-time tanpa memodifikasi data inti.
+              Anda terdeteksi login sebagai supervisor. Anda dapat memantau seluruh nilai tes, kelulusan, serta data karyawan secara real-time tanpa memodifikasi data.
             </p>
           </div>
         )}

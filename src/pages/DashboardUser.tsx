@@ -116,12 +116,12 @@ export const DashboardUser: React.FC = () => {
           Selamat Datang Kembali, <span className="text-sky-400 font-mono font-bold">{user?.username}</span>!
         </h1>
         <p className="text-xs text-slate-400 mt-1 font-mono">
-          Nomor PERNER Kedinasan: <span className="text-sky-400 font-semibold">{user?.perner || '-'}</span>
+          Nomor PERNER Anda: <span className="text-sky-400 font-semibold">{user?.perner || '-'}</span>
         </p>
       </div>
 
       {loading ? (
-        <div className="text-xs font-mono text-slate-500 animate-pulse">Menyelaraskan metrik capaian diklat Anda...</div>
+        <div className="text-xs font-mono text-slate-500 animate-pulse">Menyelaraskan metrik capaian pelatihan Anda...</div>
       ) : (
         <>
           {/* ================= CARD METRIK KINERJA UTAMA ================= */}
@@ -129,7 +129,7 @@ export const DashboardUser: React.FC = () => {
             <div className="bg-slate-800 p-5 rounded-xl border border-slate-700 flex items-center space-x-4">
               <div className="p-3 bg-sky-500/10 rounded-lg text-sky-400"><BookOpen className="w-5 h-5" /></div>
               <div>
-                <p className="text-[10px] text-slate-500 font-mono uppercase">Kelas Diikuti</p>
+                <p className="text-[10px] text-slate-500 font-mono uppercase">Pelatihan Diikuti</p>
                 <h3 className="text-2xl font-bold font-mono text-slate-100">{userStats.totalDiikuti}</h3>
               </div>
             </div>
@@ -137,7 +137,7 @@ export const DashboardUser: React.FC = () => {
             <div className="bg-slate-800 p-5 rounded-xl border border-slate-700 flex items-center space-x-4">
               <div className="p-3 bg-emerald-500/10 rounded-lg text-emerald-400"><GraduationCap className="w-5 h-5" /></div>
               <div>
-                <p className="text-[10px] text-slate-500 font-mono uppercase">Kelas Lulus Valid</p>
+                <p className="text-[10px] text-slate-500 font-mono uppercase">Pelatihan Lulus Valid</p>
                 <h3 className="text-2xl font-bold font-mono text-emerald-400">{userStats.lulusCount}</h3>
               </div>
             </div>
@@ -145,7 +145,7 @@ export const DashboardUser: React.FC = () => {
             <div className="bg-slate-800 p-5 rounded-xl border border-slate-700 flex items-center space-x-4">
               <div className="p-3 bg-amber-500/10 rounded-lg text-amber-400"><Clock className="w-5 h-5" /></div>
               <div>
-                <p className="text-[10px] text-slate-500 font-mono uppercase">Total Waktu Diklat</p>
+                <p className="text-[10px] text-slate-500 font-mono uppercase">Total Waktu Pelatihan</p>
                 <h3 className="text-2xl font-bold font-mono text-amber-400">{userStats.totalJamValid.toFixed(1)} Jam</h3>
               </div>
             </div>
@@ -157,10 +157,10 @@ export const DashboardUser: React.FC = () => {
               <div className="space-y-1.5">
                 <div className="flex items-center space-x-2 text-sky-400">
                   <Clock className="w-4 h-4" />
-                  <h4 className="text-xs font-bold uppercase font-mono tracking-wider">Pemenuhan Target Jam Diklat Tahunan</h4>
+                  <h4 className="text-xs font-bold uppercase font-mono tracking-wider">Pemenuhan Target Jam Pelatihan Tahunan</h4>
                 </div>
                 <p className="text-xs text-slate-400 font-sans leading-relaxed">
-                  Berdasarkan regulasi kompetensi internal, Anda diwajibkan menyelesaikan **minimal 10 jam pelatihan terverifikasi** setiap periode tahun berjalan.
+                  Target pemenuhan pelatihan Anda adalah minimal 10 jam pelatihan terverifikasi setiap periode tahun berjalan.
                 </p>
               </div>
 
@@ -191,20 +191,20 @@ export const DashboardUser: React.FC = () => {
             <div className="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-3.5">
               <div className="flex items-center space-x-2 text-sky-400">
                 <BarChart4 className="w-4 h-4" />
-                <h4 className="text-xs font-bold uppercase font-mono tracking-wider">Rumpun Kelas Anda</h4>
+                <h4 className="text-xs font-bold uppercase font-mono tracking-wider">Kategori Pelatihan</h4>
               </div>
               
               <div className="space-y-2.5 font-mono text-[11px] pt-1">
                 <div>
-                  <div className="flex justify-between text-slate-400 mb-0.5"><span>Core Training</span><span className="text-slate-500">{categoryStats.core} Kelas</span></div>
+                  <div className="flex justify-between text-slate-400 mb-0.5"><span>Core</span><span className="text-slate-500">{categoryStats.core} Kelas</span></div>
                   <div className="w-full bg-slate-900 h-1.5 rounded-full"><div className="bg-sky-500 h-full rounded-full" style={{ width: `${categoryStats.core ? '100%' : '0%'}` }}></div></div>
                 </div>
                 <div>
-                  <div className="flex justify-between text-slate-400 mb-0.5"><span>Generic Training</span><span className="text-slate-500">{categoryStats.generic} Kelas</span></div>
+                  <div className="flex justify-between text-slate-400 mb-0.5"><span>Generic</span><span className="text-slate-500">{categoryStats.generic} Kelas</span></div>
                   <div className="w-full bg-slate-900 h-1.5 rounded-full"><div className="bg-purple-500 h-full rounded-full" style={{ width: `${categoryStats.generic ? '100%' : '0%'}` }}></div></div>
                 </div>
                 <div>
-                  <div className="flex justify-between text-slate-400 mb-0.5"><span>Specific Training</span><span className="text-slate-500">{categoryStats.specific} Kelas</span></div>
+                  <div className="flex justify-between text-slate-400 mb-0.5"><span>Specific</span><span className="text-slate-500">{categoryStats.specific} Kelas</span></div>
                   <div className="w-full bg-slate-900 h-1.5 rounded-full"><div className="bg-amber-500 h-full rounded-full" style={{ width: `${categoryStats.specific ? '100%' : '0%'}` }}></div></div>
                 </div>
                 <div>
@@ -223,9 +223,9 @@ export const DashboardUser: React.FC = () => {
           <CheckCircle className="w-3.5 h-3.5 text-sky-400" /> <span>Catatan Prosedur Karyawan</span>
         </p>
         <ul className="list-disc list-inside space-y-1 text-slate-400 pl-1">
-          <li>Lihat menu <span className="text-sky-400">Jadwal User</span> untuk mendaftar/melihat detail tanggal pelatihan aktif.</li>
+          <li>Lihat menu <span className="text-sky-400">Jadwal Pelatihan</span> untuk mendaftar/melihat detail tanggal pelatihan aktif.</li>
           <li>Menu <span className="text-sky-400">Riwayat Pelatihan</span> menampilkan kelas yang sedang Anda tempuh saat ini.</li>
-          <li>Transkrip nilai ujian dan sertifikat kelulusan sah resmi akan diterbitkan di halaman <span className="text-sky-400">Hasil Penilaian User</span> setelah Admin memberikan verifikasi berkas.</li>
+          <li>Nilai ujian dan status kelulusan dapat dicek pada halaman <span className="text-sky-400">Hasil Penilaian</span> </li>
         </ul>
       </div>
     </div>
