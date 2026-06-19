@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
-import { Plus, Calendar, Trash2, Edit2, Check, X, Users, UserPlus, RefreshCw } from 'lucide-react';
+import { Plus, Trash2, Edit2, Check, X, Users, UserPlus, RefreshCw } from 'lucide-react';
 
 export const JadwalPelatihan: React.FC = () => {
   const [schedules, setSchedules] = useState<any[]>([]);

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { useAuth } from '../context/AuthContext';
-import { Award, ShieldCheck, CheckCircle, Clock } from 'lucide-react';
+import { Award, ShieldCheck, Clock } from 'lucide-react';
 
 export const HasilPenilaianUser: React.FC = () => {
   const { user } = useAuth();

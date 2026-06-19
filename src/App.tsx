@@ -3,26 +3,19 @@ import { useAuth } from './context/AuthContext';
 import { SidebarLayout } from './components/SidebarLayout';
 import { Login } from './pages/Login';
 
-// 1. IMPOR HALAMAN OPERASIONAL ADMIN
+// Impor Halaman Operasional Sisi Admin
 import { DashboardAdmin } from './pages/DashboardAdmin';
 import { DataPeserta } from './pages/DataPeserta';
 import { ManajemenMaster } from './pages/ManajemenMaster';
 import { JadwalPelatihan } from './pages/JadwalPelatihan';
-import { ManajemenPenilaian } from './pages/ManajemenPenilaian';
+import { ManajemenPenilaian } from './pages/ManajemenPenilaian'; // Menggunakan nama komponen baru Anda
 import { UserSettings } from './pages/UserSettings';
 
-// 2. IMPOR HALAMAN OPERASIONAL USER / KARYAWAN
+// Impor Halaman Operasional Sisi Karyawan / User
 import { DashboardUser } from './pages/DashboardUser';
 import { JadwalUser } from './pages/JadwalUser';
+import { RiwayatPelatihan } from './pages/RiwayatPelatihan';
 import { HasilPenilaianUser } from './pages/HasilPenilaianUser';
-
-// 3. KOMPONEN DARURAT RIWAYAT (Ambil langsung atau buat draf lokal jika file belum ada)
-// Jika Anda punya file RiwayatUser.tsx atau RiwayatPelatihan.tsx, silakan ganti baris di bawah ini dengan impor normal.
-const RiwayatPelatihanFallback: React.FC = () => (
-  <div className="p-6 text-slate-400 font-mono text-xs">
-    Halaman Monitoring Riwayat Pelatihan Karyawan.
-  </div>
-);
 
 export const App: React.FC = () => {
   const { user, logout, loading } = useAuth();
@@ -61,7 +54,7 @@ export const App: React.FC = () => {
       // BLOK NAVIGASI SISI USER / KARYAWAN BIASA
       case 'dashboardUser':  return <DashboardUser />;
       case 'jadwalUser':     return <JadwalUser />;
-      case 'riwayat':        return <RiwayatPelatihanFallback />;
+      case 'riwayat':        return <RiwayatPelatihan />;
       case 'kelulusan':      return <HasilPenilaianUser />;
 
       default:

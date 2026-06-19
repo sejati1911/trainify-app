@@ -1,7 +1,7 @@
 import React from 'react';
 import { 
   Library, Calendar, Award, Settings, LogOut, 
-  UserCircle, LayoutDashboard, Users 
+    LayoutDashboard, Users 
 } from 'lucide-react';
 
 interface SidebarLayoutProps {

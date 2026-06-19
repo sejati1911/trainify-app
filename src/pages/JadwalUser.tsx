@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { useAuth } from '../context/AuthContext';
-import { Calendar, CheckCircle2, RefreshCw } from 'lucide-react';
+import { Calendar, RefreshCw } from 'lucide-react';
 
 export const JadwalUser: React.FC = () => {
   const { user } = useAuth();

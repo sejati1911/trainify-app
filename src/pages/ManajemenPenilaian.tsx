@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
-import { Edit2, Plus, RefreshCw, Trash2, X, ShieldCheck } from 'lucide-react';
+import { Edit2 } from 'lucide-react';
 
 export const ManajemenPenilaian: React.FC = () => {
   const [scoresList, setScoresList] = useState<any[]>([]);
   const [pesertaList, setPesertaList] = useState<any[]>([]);
   const [jadwalList, setJadwalList] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
 
   // States Form
   const [isEditing, setIsEditing] = useState(false);
@@ -23,9 +22,18 @@ export const ManajemenPenilaian: React.FC = () => {
   const [liveKategori, setLiveKategori] = useState('-');
   const [liveStatus, setLiveStatus] = useState('-');
 
+  const resetForm = () => {
+    setIsEditing(false); 
+    setCurrentId(null); 
+    setIdPeserta(''); 
+    setIdJadwal(''); 
+    setNilaiPre(''); 
+    setNilaiPost(''); 
+    setKeterangan('');
+  };
+
   const fetchAllData = async () => {
     try {
-      setLoading(true);
       const { data: pData } = await supabase.from('data_peserta').select('id_peserta, perner, nama_peserta');
       const { data: jData } = await supabase.from('jadwal_pelatihan').select(`
         id_jadwal, tanggal_pelatihan, type_pelatihan (nama_pelatihan)
@@ -43,7 +51,6 @@ export const ManajemenPenilaian: React.FC = () => {
     } catch (err) {
       console.error(err);
     } finally {
-      setLoading(false);
       resetForm();
     }
   };
@@ -86,11 +93,9 @@ export const ManajemenPenilaian: React.FC = () => {
     } catch (err: any) { alert(err.message); }
   };
 
-  const resetForm = () => {
-    setIsEditing(false); setCurrentId(null); setIdPeserta(''); setIdJadwal(''); setNilaiPre(''); setNilaiPost(''); setKeterangan('');
-  };
-
-  useEffect(() => { fetchAllData(); }, []);
+  useEffect(() => { 
+    fetchAllData(); 
+  }, []);
 
   return (
     <div className="p-6 space-y-6 text-white">
@@ -127,16 +132,19 @@ export const ManajemenPenilaian: React.FC = () => {
               <tr><th className="p-3">Peserta</th><th className="p-3">Nilai Akhir</th><th className="p-3">Status</th><th className="p-3">Aksi</th></tr>
             </thead>
             <tbody className="divide-y divide-slate-700">
-              {scoresList.map(s => (
-                <tr key={s.id_hasil}>
-                  <td className="p-3 font-semibold">{s.data_peserta?.nama_peserta}</td>
-                  <td className="p-3 font-mono">{((s.nilai_pre_test + s.nilai_post_test)/2).toFixed(1)}</td>
-                  <td className="p-3 font-bold">{s.status}</td>
-                  <td className="p-3 flex space-x-2">
-                    <button onClick={() => { setIsEditing(true); setCurrentId(s.id_hasil); setIdPeserta(s.id_peserta); setIdJadwal(s.id_jadwal); setNilaiPre(s.nilai_pre_test); setNilaiPost(s.nilai_post_test); }}><Edit2 className="w-4 h-4 text-amber-400"/></button>
-                  </td>
-                </tr>
-              ))}
+              {scoresList.map(s => {
+                const finalVal = ((s.nilai_pre_test + s.nilai_post_test) / 2) || 0;
+                return (
+                  <tr key={s.id_hasil}>
+                    <td className="p-3 font-semibold">{s.data_peserta?.nama_peserta}</td>
+                    <td className="p-3 font-mono">{finalVal.toFixed(1)}</td>
+                    <td className="p-3 font-bold">{s.status}</td>
+                    <td className="p-3 flex space-x-2">
+                      <button type="button" onClick={() => { setIsEditing(true); setCurrentId(s.id_hasil); setIdPeserta(s.id_peserta); setIdJadwal(s.id_jadwal); setNilaiPre(s.nilai_pre_test); setNilaiPost(s.nilai_post_test); }}><Edit2 className="w-4 h-4 text-amber-400"/></button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { useAuth } from '../context/AuthContext';
-import { BookOpen, Award, GraduationCap, CheckCircle } from 'lucide-react';
+import { BookOpen, GraduationCap, CheckCircle } from 'lucide-react';
 
 export const DashboardUser: React.FC = () => {
   const { user } = useAuth();
