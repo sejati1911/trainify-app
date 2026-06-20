@@ -157,14 +157,14 @@ export const DashboardAdmin: React.FC = () => {
   const pctSupp = (categoryDistribution.supplementary / totalKategori) * 100;
 
   return (
-    <div className="p-6 space-y-6 text-white">
+    <div className="p-6 space-y-6 text-slate-800 dark:text-white">
       {/* HEADER UTAMA */}
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-sky-400">
             {isSpv ? 'Dashboard Supervisor' : 'Dashboard Master Admin'}
           </h1>
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-slate-500 dark:text-slate-400">
             {isSpv ? 'Hak Monitoring: Ringkasan pemenuhan KPI 10 jam pelatihan karyawan.' : 'Ringkasan pemenuhan KPI 10 jam pelatihan karyawan'}
           </p>
         </div>
@@ -176,39 +176,39 @@ export const DashboardAdmin: React.FC = () => {
       </div>
 
       {loading ? (
-        <div className="text-xs font-mono text-slate-500 animate-pulse">Mengkalkulasi parameter parameter analitik sistem...</div>
+        <div className="text-xs font-mono text-slate-400 dark:text-slate-500 animate-pulse">Mengkalkulasi parameter parameter analitik sistem...</div>
       ) : (
         <>
           {/* ================= BLOK 1: SUMMARY METRICS CARD ================= */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-            <div className="bg-slate-800 p-5 rounded-xl border border-slate-700 flex items-center space-x-4">
+            <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-sky-200 dark:border-slate-700 flex items-center space-x-4">
               <div className="p-3 bg-sky-500/10 rounded-lg text-sky-400"><Users className="w-5 h-5" /></div>
               <div>
-                <p className="text-[10px] text-slate-500 font-mono uppercase">Total Karyawan</p>
-                <h3 className="text-2xl font-bold font-mono text-slate-100">{stats.totalPeserta}</h3>
+                <p className="text-[10px] text-slate-400 dark:text-slate-500 font-mono uppercase">Total Karyawan</p>
+                <h3 className="text-2xl font-bold font-mono text-slate-800 dark:text-slate-100">{stats.totalPeserta}</h3>
               </div>
             </div>
 
-            <div className="bg-slate-800 p-5 rounded-xl border border-slate-700 flex items-center space-x-4">
+            <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-sky-200 dark:border-slate-700 flex items-center space-x-4">
               <div className="p-3 bg-emerald-500/10 rounded-lg text-emerald-400"><Library className="w-5 h-5" /></div>
               <div>
-                <p className="text-[10px] text-slate-500 font-mono uppercase">Data Master</p>
-                <h3 className="text-2xl font-bold font-mono text-slate-100">{stats.totalMaster}</h3>
+                <p className="text-[10px] text-slate-400 dark:text-slate-500 font-mono uppercase">Data Master</p>
+                <h3 className="text-2xl font-bold font-mono text-slate-800 dark:text-slate-100">{stats.totalMaster}</h3>
               </div>
             </div>
 
-            <div className="bg-slate-800 p-5 rounded-xl border border-slate-700 flex items-center space-x-4">
+            <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-sky-200 dark:border-slate-700 flex items-center space-x-4">
               <div className="p-3 bg-purple-500/10 rounded-lg text-purple-400"><Calendar className="w-5 h-5" /></div>
               <div>
-                <p className="text-[10px] text-slate-500 font-mono uppercase">Sesi Pelatihan</p>
-                <h3 className="text-2xl font-bold font-mono text-slate-100">{stats.totalJadwal}</h3>
+                <p className="text-[10px] text-slate-400 dark:text-slate-500 font-mono uppercase">Sesi Pelatihan</p>
+                <h3 className="text-2xl font-bold font-mono text-slate-800 dark:text-slate-100">{stats.totalJadwal}</h3>
               </div>
             </div>
 
-            <div className="bg-slate-800 p-5 rounded-xl border border-slate-700 flex items-center space-x-4">
+            <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-sky-200 dark:border-slate-700 flex items-center space-x-4">
               <div className="p-3 bg-amber-500/10 rounded-lg text-amber-400"><ShieldAlert className="w-5 h-5" /></div>
               <div>
-                <p className="text-[10px] text-slate-500 font-mono uppercase">Belum Diverifikasi</p>
+                <p className="text-[10px] text-slate-400 dark:text-slate-500 font-mono uppercase">Belum Diverifikasi</p>
                 <h3 className="text-2xl font-bold font-mono text-amber-400">{stats.pendingVerify}</h3>
               </div>
             </div>
@@ -218,7 +218,7 @@ export const DashboardAdmin: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
             {/* CARD KEPATUHAN TARGET KPI (10 JAM / TAHUN) */}
-            <div className="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-4">
+            <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-sky-200 dark:border-slate-700 space-y-4">
               <div className="flex items-center space-x-2 text-sky-400">
                 <CheckCircle2 className="w-4 h-4" />
                 <h4 className="text-xs font-bold uppercase font-mono tracking-wider">Kepatuhan KPI (10 Jam/Tahun)</h4>
@@ -227,18 +227,18 @@ export const DashboardAdmin: React.FC = () => {
                 <div>
                   <div className="flex justify-between text-xs font-mono mb-1">
                     <span className="text-emerald-400">Target Terpenuhi ({stats.kpiAchieved})</span>
-                    <span className="text-slate-400">{((stats.kpiAchieved / (stats.totalPeserta || 1)) * 100).toFixed(0)}%</span>
+                    <span className="text-slate-500 dark:text-slate-400">{((stats.kpiAchieved / (stats.totalPeserta || 1)) * 100).toFixed(0)}%</span>
                   </div>
-                  <div className="w-full bg-slate-900 h-2 rounded-full overflow-hidden">
+                  <div className="w-full bg-sky-50 dark:bg-slate-900 h-2 rounded-full overflow-hidden">
                     <div className="bg-emerald-500 h-full transition-all duration-500" style={{ width: `${(stats.kpiAchieved / (stats.totalPeserta || 1)) * 100}%` }}></div>
                   </div>
                 </div>
                 <div>
                   <div className="flex justify-between text-xs font-mono mb-1">
                     <span className="text-red-400">Belum Terpenuhi ({stats.kpiFailed})</span>
-                    <span className="text-slate-400">{((stats.kpiFailed / (stats.totalPeserta || 1)) * 100).toFixed(0)}%</span>
+                    <span className="text-slate-500 dark:text-slate-400">{((stats.kpiFailed / (stats.totalPeserta || 1)) * 100).toFixed(0)}%</span>
                   </div>
-                  <div className="w-full bg-slate-900 h-2 rounded-full overflow-hidden">
+                  <div className="w-full bg-sky-50 dark:bg-slate-900 h-2 rounded-full overflow-hidden">
                     <div className="bg-red-500 h-full transition-all duration-500" style={{ width: `${(stats.kpiFailed / (stats.totalPeserta || 1)) * 100}%` }}></div>
                   </div>
                 </div>
@@ -246,45 +246,45 @@ export const DashboardAdmin: React.FC = () => {
             </div>
 
             {/* CARD RASIO GENDER KARYAWAN */}
-            <div className="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-4">
+            <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-sky-200 dark:border-slate-700 space-y-4">
               <div className="flex items-center space-x-2 text-sky-400">
                 <PieChart className="w-4 h-4" />
                 <h4 className="text-xs font-bold uppercase font-mono tracking-wider">Komposisi Gender Karyawan</h4>
               </div>
               <div className="grid grid-cols-2 gap-2 pt-2 text-center font-mono">
-                <div className="p-2.5 bg-slate-900/50 rounded-lg border border-slate-700/40">
-                  <p className="text-[10px] text-slate-500 uppercase">Laki-Laki</p>
+                <div className="p-2.5 bg-sky-50/70 dark:bg-slate-900/50 rounded-lg border border-sky-200/60 dark:border-slate-700/40">
+                  <p className="text-[10px] text-slate-400 dark:text-slate-500 uppercase">Laki-Laki</p>
                   <p className="text-lg font-bold text-indigo-400 mt-0.5">{stats.maleCount}</p>
                 </div>
-                <div className="p-2.5 bg-slate-900/50 rounded-lg border border-slate-700/40">
-                  <p className="text-[10px] text-slate-500 uppercase">Perempuan</p>
+                <div className="p-2.5 bg-sky-50/70 dark:bg-slate-900/50 rounded-lg border border-sky-200/60 dark:border-slate-700/40">
+                  <p className="text-[10px] text-slate-400 dark:text-slate-500 uppercase">Perempuan</p>
                   <p className="text-lg font-bold text-pink-400 mt-0.5">{stats.femaleCount}</p>
                 </div>
               </div>
             </div>
 
             {/* CARD DISTRIBUSI RUMPUN KATEGORI PELATHAN */}
-            <div className="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-3.5">
+            <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-sky-200 dark:border-slate-700 space-y-3.5">
               <div className="flex items-center space-x-2 text-sky-400">
                 <BarChart2 className="w-4 h-4" />
                 <h4 className="text-xs font-bold uppercase font-mono tracking-wider">Distribusi Kategori Kelas</h4>
               </div>
               <div className="space-y-2 pt-1 font-mono text-[11px]">
                 <div>
-                  <div className="flex justify-between text-slate-400 mb-0.5"><span>Core Training ({categoryDistribution.core})</span></div>
-                  <div className="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden"><div className="bg-sky-500 h-full" style={{ width: `${pctCore}%` }}></div></div>
+                  <div className="flex justify-between text-slate-500 dark:text-slate-400 mb-0.5"><span>Core Training ({categoryDistribution.core})</span></div>
+                  <div className="w-full bg-sky-50 dark:bg-slate-900 h-1.5 rounded-full overflow-hidden"><div className="bg-sky-500 h-full" style={{ width: `${pctCore}%` }}></div></div>
                 </div>
                 <div>
-                  <div className="flex justify-between text-slate-400 mb-0.5"><span>Generic Training ({categoryDistribution.generic})</span></div>
-                  <div className="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden"><div className="bg-purple-500 h-full" style={{ width: `${pctGeneric}%` }}></div></div>
+                  <div className="flex justify-between text-slate-500 dark:text-slate-400 mb-0.5"><span>Generic Training ({categoryDistribution.generic})</span></div>
+                  <div className="w-full bg-sky-50 dark:bg-slate-900 h-1.5 rounded-full overflow-hidden"><div className="bg-purple-500 h-full" style={{ width: `${pctGeneric}%` }}></div></div>
                 </div>
                 <div>
-                  <div className="flex justify-between text-slate-400 mb-0.5"><span>Specific Training ({categoryDistribution.specific})</span></div>
-                  <div className="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden"><div className="bg-amber-500 h-full" style={{ width: `${pctSpecific}%` }}></div></div>
+                  <div className="flex justify-between text-slate-500 dark:text-slate-400 mb-0.5"><span>Specific Training ({categoryDistribution.specific})</span></div>
+                  <div className="w-full bg-sky-50 dark:bg-slate-900 h-1.5 rounded-full overflow-hidden"><div className="bg-amber-500 h-full" style={{ width: `${pctSpecific}%` }}></div></div>
                 </div>
                 <div>
-                  <div className="flex justify-between text-slate-400 mb-0.5"><span>Supplementary ({categoryDistribution.supplementary})</span></div>
-                  <div className="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden"><div className="bg-teal-500 h-full" style={{ width: `${pctSupp}%` }}></div></div>
+                  <div className="flex justify-between text-slate-500 dark:text-slate-400 mb-0.5"><span>Supplementary ({categoryDistribution.supplementary})</span></div>
+                  <div className="w-full bg-sky-50 dark:bg-slate-900 h-1.5 rounded-full overflow-hidden"><div className="bg-teal-500 h-full" style={{ width: `${pctSupp}%` }}></div></div>
                 </div>
               </div>
             </div>
@@ -292,13 +292,13 @@ export const DashboardAdmin: React.FC = () => {
           </div>
 
           {/* ================= BLOK 3: TABEL PROGRESS BAR JAM DIKLAT KARYAWAN ================= */}
-          <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
-            <div className="p-4 bg-slate-850 border-b border-slate-700">
+          <div className="bg-white dark:bg-slate-800 rounded-xl border border-sky-200 dark:border-slate-700 overflow-hidden">
+            <div className="p-4 bg-sky-50 dark:bg-slate-900 border-b border-sky-200 dark:border-slate-700">
               <h3 className="text-xs font-bold text-sky-400 uppercase font-mono tracking-wider">Progres Capaian Jam Pelatihan Karyawan</h3>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="bg-slate-900 border-b border-slate-700 text-slate-400 uppercase font-mono text-[10px]">
+                <thead className="bg-sky-50 dark:bg-slate-900 border-b border-sky-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 uppercase font-mono text-[10px]">
                   <tr>
                     <th className="p-3">PERNER</th>
                     <th className="p-3">Nama Karyawan</th>
@@ -307,22 +307,22 @@ export const DashboardAdmin: React.FC = () => {
                     <th className="p-3 w-1/4">Status Target (Min. 10 Jam)</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-700 text-slate-200">
+                <tbody className="divide-y divide-sky-200 dark:divide-slate-700 text-slate-700 dark:text-slate-200">
                   {employeeProgress.length === 0 ? (
-                    <tr><td colSpan={5} className="p-4 text-center font-mono text-slate-500">Tidak ada rekam jejak progres karyawan ditemukan.</td></tr>
+                    <tr><td colSpan={5} className="p-4 text-center font-mono text-slate-400 dark:text-slate-500">Tidak ada rekam jejak progres karyawan ditemukan.</td></tr>
                   ) : (
                     employeeProgress.map(emp => {
                       // Hitung rasio terhadap target 10 jam (maksimal batas visual bar 100%)
                       const rasioKpi = Math.min((emp.total_jam / 10) * 100, 100);
                       return (
-                        <tr key={emp.id_peserta} className="hover:bg-slate-750/10 transition-colors">
+                        <tr key={emp.id_peserta} className="hover:bg-sky-50 dark:hover:bg-slate-800 transition-colors">
                           <td className="p-3 font-mono text-sky-400 font-medium">{emp.perner}</td>
                           <td className="p-3 font-semibold">{emp.nama_peserta}</td>
-                          <td className="p-3 text-slate-400">{emp.job_position}</td>
-                          <td className="p-3 font-mono font-bold text-slate-100">{emp.total_jam.toFixed(1)} Jam</td>
+                          <td className="p-3 text-slate-500 dark:text-slate-400">{emp.job_position}</td>
+                          <td className="p-3 font-mono font-bold text-slate-800 dark:text-slate-100">{emp.total_jam.toFixed(1)} Jam</td>
                           <td className="p-3">
                             <div className="space-y-1.5">
-                              <div className="w-full bg-slate-900 h-2 rounded-full overflow-hidden border border-slate-700/30">
+                              <div className="w-full bg-sky-50 dark:bg-slate-900 h-2 rounded-full overflow-hidden border border-sky-200/60 dark:border-slate-700/30">
                                 <div 
                                   className={`h-full transition-all duration-300 ${emp.total_jam >= 10 ? 'bg-gradient-to-r from-emerald-600 to-emerald-400' : 'bg-gradient-to-r from-amber-600 to-amber-400'}`}
                                   style={{ width: `${rasioKpi}%` }}
@@ -344,12 +344,12 @@ export const DashboardAdmin: React.FC = () => {
 
           {/* PANEL ALUR OPERASIONAL KERJA (Hanya Tampil Jika BUKAN SPV) */}
           {!isSpv && (
-            <div className="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-3">
+            <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-sky-200 dark:border-slate-700 space-y-3">
               <h3 className="font-bold text-xs uppercase font-mono text-sky-400 tracking-wider">Panduan Prosedur Modul Master Admin</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-[11px] font-mono">
-                <div className="p-3 bg-slate-900/40 rounded-lg border border-slate-700/50"><span className="text-sky-400 font-bold block mb-0.5">01. Rilis Kelas</span><p className="text-slate-400 leading-relaxed">Daftarkan materi pelatihan baru di Manajemen Master, lalu tetapkan jadwal dan trainer di Jadwal Pelatihan.</p></div>
-                <div className="p-3 bg-slate-900/40 rounded-lg border border-slate-700/50"><span className="text-purple-400 font-bold block mb-0.5">02. Plotting Staff</span><p className="text-slate-400 leading-relaxed">Gunakan ikon tombol "Kelola Peserta" di daftar tabel jadwal untuk melakukan entri plotting karyawan.</p></div>
-                <div className="p-3 bg-slate-900/40 rounded-lg border border-slate-700/50"><span className="text-emerald-400 font-bold block mb-0.5">03. Verifikasi Nilai</span><p className="text-slate-400 leading-relaxed">Masukkan akumulasi skor ujian peserta di Manajemen Penilaian, lalu klik "Verify" untuk menutup pelatihan.</p></div>
+                <div className="p-3 bg-sky-50/70 dark:bg-slate-900/40 rounded-lg border border-sky-200/60 dark:border-slate-700/50"><span className="text-sky-400 font-bold block mb-0.5">01. Rilis Kelas</span><p className="text-slate-500 dark:text-slate-400 leading-relaxed">Daftarkan materi pelatihan baru di Manajemen Master, lalu tetapkan jadwal dan trainer di Jadwal Pelatihan.</p></div>
+                <div className="p-3 bg-sky-50/70 dark:bg-slate-900/40 rounded-lg border border-sky-200/60 dark:border-slate-700/50"><span className="text-purple-400 font-bold block mb-0.5">02. Plotting Staff</span><p className="text-slate-500 dark:text-slate-400 leading-relaxed">Gunakan ikon tombol "Kelola Peserta" di daftar tabel jadwal untuk melakukan entri plotting karyawan.</p></div>
+                <div className="p-3 bg-sky-50/70 dark:bg-slate-900/40 rounded-lg border border-sky-200/60 dark:border-slate-700/50"><span className="text-emerald-400 font-bold block mb-0.5">03. Verifikasi Nilai</span><p className="text-slate-500 dark:text-slate-400 leading-relaxed">Masukkan akumulasi skor ujian peserta di Manajemen Penilaian, lalu klik "Verify" untuk menutup pelatihan.</p></div>
               </div>
             </div>
           )}

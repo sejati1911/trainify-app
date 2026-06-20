@@ -160,15 +160,15 @@ export const ManajemenPenilaian: React.FC = () => {
   }, []);
 
   return (
-    <div className="p-6 space-y-6 text-white">
+    <div className="p-6 space-y-6 text-slate-800 dark:text-white">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-sky-400">Manajemen Penilaian</h1>
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-slate-500 dark:text-slate-400">
             {isSpv ? 'Mode Monitoring: Menampilkan rekapitulasi penilaian dari hasil pelatihan.' : 'Sinkronisasi parameter nilai, konversi grade, dan aksi verifikasi kelulusan pelatihan.'}
           </p>
         </div>
-        <button onClick={fetchAllData} disabled={loading} className="p-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-slate-300 cursor-pointer disabled:opacity-50">
+        <button onClick={fetchAllData} disabled={loading} className="p-2.5 bg-white dark:bg-slate-800 hover:bg-slate-700 border border-sky-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-300 cursor-pointer disabled:opacity-50">
           <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
         </button>
       </div>
@@ -178,27 +178,27 @@ export const ManajemenPenilaian: React.FC = () => {
         
         {/* FORM OPERASIONAL: Hanya merender jika BUKAN SPV */}
         {!isSpv ? (
-          <form onSubmit={handleSave} className="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-3.5 h-fit">
-            <div className="flex justify-between items-center border-b border-slate-700/50 pb-2">
+          <form onSubmit={handleSave} className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-sky-200 dark:border-slate-700 space-y-3.5 h-fit">
+            <div className="flex justify-between items-center border-b border-sky-200/60 dark:border-slate-700/50 pb-2">
               <h3 className="font-bold text-sky-400 text-xs uppercase font-mono tracking-wider">
                 {isEditing ? 'Koreksi Nilai / Edit Mode' : 'Entri Nilai Pelatihan'}
               </h3>
               {isEditing && (
-                <button type="button" onClick={resetForm} className="text-slate-400 hover:text-white"><X className="w-4 h-4" /></button>
+                <button type="button" onClick={resetForm} className="text-slate-500 dark:text-slate-400 hover:text-white"><X className="w-4 h-4" /></button>
               )}
             </div>
 
             <div>
-              <label className="block text-[11px] font-semibold text-slate-400 mb-1">Nama Karyawan</label>
-              <select required value={idPeserta} onChange={e => setIdPeserta(e.target.value)} disabled={isEditing} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none">
+              <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">Nama Karyawan</label>
+              <select required value={idPeserta} onChange={e => setIdPeserta(e.target.value)} disabled={isEditing} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-800 dark:text-white focus:outline-none">
                 <option value="">-- Pilih Peserta --</option>
                 {pesertaList.map(p => <option key={p.id_peserta} value={p.id_peserta}>{p.perner} - {p.nama_peserta}</option>)}
               </select>
             </div>
 
             <div>
-              <label className="block text-[11px] font-semibold text-slate-400 mb-1">Sesi Pelatihan</label>
-              <select required value={idJadwal} onChange={e => setIdJadwal(e.target.value)} disabled={isEditing} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none">
+              <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">Sesi Pelatihan</label>
+              <select required value={idJadwal} onChange={e => setIdJadwal(e.target.value)} disabled={isEditing} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-800 dark:text-white focus:outline-none">
                 <option value="">-- Pilih Jadwal Kelas --</option>
                 {jadwalList.map(j => (
                   <option key={j.id_jadwal} value={j.id_jadwal}>
@@ -210,35 +210,35 @@ export const ManajemenPenilaian: React.FC = () => {
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-[11px] font-semibold text-slate-400 mb-1">Nilai Pre-Test</label>
-                <input type="number" required min="0" max="100" placeholder="0-100" value={nilaiPre} onChange={e => setNilaiPre(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none" />
+                <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">Nilai Pre-Test</label>
+                <input type="number" required min="0" max="100" placeholder="0-100" value={nilaiPre} onChange={e => setNilaiPre(e.target.value)} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-800 dark:text-white focus:outline-none" />
               </div>
               <div>
-                <label className="block text-[11px] font-semibold text-slate-400 mb-1">Nilai Post-Test</label>
-                <input type="number" required min="0" max="100" placeholder="0-100" value={nilaiPost} onChange={e => setNilaiPost(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none" />
+                <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">Nilai Post-Test</label>
+                <input type="number" required min="0" max="100" placeholder="0-100" value={nilaiPost} onChange={e => setNilaiPost(e.target.value)} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-800 dark:text-white focus:outline-none" />
               </div>
             </div>
 
-            <div className="bg-slate-900/80 p-3 rounded-xl border border-slate-700/60 grid grid-cols-3 gap-1 text-center font-mono text-[11px]">
+            <div className="bg-sky-50/80 dark:bg-slate-900/80 p-3 rounded-xl border border-sky-200/60 dark:border-slate-700/60 grid grid-cols-3 gap-1 text-center font-mono text-[11px]">
               <div>
-                <p className="text-slate-500 text-[9px] uppercase">Rata-rata</p>
+                <p className="text-slate-400 dark:text-slate-500 text-[9px] uppercase">Rata-rata</p>
                 <p className="font-bold text-sky-400 text-sm mt-0.5">
                   {typeof liveNilaiAkhir === 'number' ? liveNilaiAkhir.toFixed(1) : liveNilaiAkhir}
                 </p>
               </div>
               <div>
-                <p className="text-slate-500 text-[9px] uppercase">Grade</p>
+                <p className="text-slate-400 dark:text-slate-500 text-[9px] uppercase">Grade</p>
                 <p className="font-bold text-amber-400 text-xs mt-1">{liveKategoriPre} / {liveKategoriPost}</p>
               </div>
               <div>
-                <p className="text-slate-500 text-[9px] uppercase">Kelulusan</p>
+                <p className="text-slate-400 dark:text-slate-500 text-[9px] uppercase">Kelulusan</p>
                 <p className={`font-bold text-[10px] uppercase mt-1 ${liveStatus === 'Lulus' ? 'text-emerald-400' : 'text-red-400'}`}>{liveStatus}</p>
               </div>
             </div>
 
             <div>
-              <label className="block text-[11px] font-semibold text-slate-400 mb-1">Keterangan Catatan</label>
-              <textarea placeholder="Catatan..." value={keterangan} onChange={e => setKeterangan(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white h-14 resize-none focus:outline-none" />
+              <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">Keterangan Catatan</label>
+              <textarea placeholder="Catatan..." value={keterangan} onChange={e => setKeterangan(e.target.value)} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-800 dark:text-white h-14 resize-none focus:outline-none" />
             </div>
 
             <button type="submit" className="w-full bg-sky-500 text-slate-950 py-2.5 rounded-lg font-bold text-xs hover:bg-sky-400 transition-all cursor-pointer">
@@ -247,19 +247,19 @@ export const ManajemenPenilaian: React.FC = () => {
           </form>
         ) : (
           /* JIKA SPV: Berikan Banner Informasi bahwa ini halaman Read-Only */
-          <div className="bg-slate-900/40 p-5 rounded-xl border border-slate-800/80 h-fit space-y-2">
+          <div className="bg-sky-50/70 dark:bg-slate-900/40 p-5 rounded-xl border border-sky-100 dark:border-slate-800/80 h-fit space-y-2">
             <h4 className="text-xs font-bold font-mono text-amber-400 uppercase tracking-wide">Akses Terbatas Supervisor</h4>
-            <p className="text-xs text-slate-400 leading-relaxed font-sans">
+            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-sans">
               Anda terdeteksi login sebagai supervisor. Anda dapat memantau seluruh nilai tes, kelulusan, serta data karyawan secara real-time tanpa memodifikasi data.
             </p>
           </div>
         )}
 
         {/* VIEW TABEL DATA PENILAIAN */}
-        <div className="lg:col-span-2 bg-slate-800 rounded-xl border border-slate-700 overflow-hidden h-fit">
+        <div className="lg:col-span-2 bg-white dark:bg-slate-800 rounded-xl border border-sky-200 dark:border-slate-700 overflow-hidden h-fit">
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs text-slate-200">
-              <thead className="bg-slate-850 text-slate-400 uppercase font-mono border-b border-slate-700">
+            <table className="w-full text-left text-xs text-slate-700 dark:text-slate-200">
+              <thead className="bg-sky-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400 uppercase font-mono border-b border-sky-200 dark:border-slate-700">
                 <tr>
                   <th className="p-3">Karyawan / Pelatihan</th>
                   <th className="p-3 text-center">Pre</th>
@@ -268,28 +268,28 @@ export const ManajemenPenilaian: React.FC = () => {
                   {!isSpv && <th className="p-3 text-center">Aksi</th>}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-700">
+              <tbody className="divide-y divide-sky-200 dark:divide-slate-700">
                 {scoresList.length === 0 ? (
-                  <tr><td colSpan={isSpv ? 4 : 5} className="p-4 text-center text-slate-500 font-mono text-[11px]">Belum ada data nilai terkumpul.</td></tr>
+                  <tr><td colSpan={isSpv ? 4 : 5} className="p-4 text-center text-slate-400 dark:text-slate-500 font-mono text-[11px]">Belum ada data nilai terkumpul.</td></tr>
                 ) : (
                   scoresList.map(s => {
                     const na = Number(s.nilai_akhir) || 0;
                     return (
-                      <tr key={s.id_hasil} className="hover:bg-slate-750/20 transition-colors">
+                      <tr key={s.id_hasil} className="hover:bg-sky-50 dark:hover:bg-slate-750/20 transition-colors">
                         <td className="p-3">
-                          <p className="font-semibold text-slate-100">{s.data_peserta?.nama_peserta || 'Guest'}</p>
-                          <p className="text-slate-500 text-[10px] font-mono">
+                          <p className="font-semibold text-slate-800 dark:text-slate-100">{s.data_peserta?.nama_peserta || 'Guest'}</p>
+                          <p className="text-slate-400 dark:text-slate-500 text-[10px] font-mono">
                             PERNER: {s.data_peserta?.perner} • {s.jadwal_pelatihan?.type_pelatihan?.nama_pelatihan}
                           </p>
                         </td>
-                        <td className="p-3 text-center font-mono text-slate-400">
-                          {s.nilai_pretest} <span className="text-[9px] text-slate-500">({s.kategori_pretest})</span>
+                        <td className="p-3 text-center font-mono text-slate-500 dark:text-slate-400">
+                          {s.nilai_pretest} <span className="text-[9px] text-slate-400 dark:text-slate-500">({s.kategori_pretest})</span>
                         </td>
                         <td className="p-3 text-center font-mono text-sky-400 font-medium">
-                          {s.nilai_posttest} <span className="text-[9px] text-slate-500">({s.kategori_posttest})</span>
+                          {s.nilai_posttest} <span className="text-[9px] text-slate-400 dark:text-slate-500">({s.kategori_posttest})</span>
                         </td>
                         <td className="p-3 text-center font-mono">
-                          <p className="font-bold text-slate-200">{na.toFixed(1)}</p>
+                          <p className="font-bold text-slate-700 dark:text-slate-200">{na.toFixed(1)}</p>
                           <span className={`text-[9px] px-1 rounded font-sans font-bold uppercase ${s.status === 'Lulus' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}`}>
                             {s.status}
                           </span>

@@ -186,13 +186,13 @@ export const UserSettings: React.FC = () => {
   }, []);
 
   return (
-    <div className="p-6 text-white space-y-6">
+    <div className="p-6 text-slate-800 dark:text-white space-y-6">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-sky-400">User Settings</h1>
-          <p className="text-sm text-slate-400 font-mono">Registrasi Otorisasi Akun & Profil Karyawan Terintegrasi (Enkripsi Bcrypt Active)</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400 font-mono">Registrasi Otorisasi Akun & Profil Karyawan Terintegrasi (Enkripsi Bcrypt Active)</p>
         </div>
-        <button onClick={fetchUsers} disabled={loading} className="p-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-slate-300 cursor-pointer">
+        <button onClick={fetchUsers} disabled={loading} className="p-2.5 bg-white dark:bg-slate-800 hover:bg-slate-700 border border-sky-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-300 cursor-pointer">
           <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
         </button>
       </div>
@@ -200,51 +200,51 @@ export const UserSettings: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* FORM OPERASIONAL */}
-        <form onSubmit={handleSaveUser} className="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-3 h-fit">
-          <div className="flex justify-between items-center border-b border-slate-700/50 pb-2">
+        <form onSubmit={handleSaveUser} className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-sky-200 dark:border-slate-700 space-y-3 h-fit">
+          <div className="flex justify-between items-center border-b border-sky-200/60 dark:border-slate-700/50 pb-2">
             <h3 className="font-bold text-sky-400 text-xs uppercase font-mono tracking-wider">
               {isEditing ? 'Koreksi Data Akun' : 'Daftarkan Akun Baru'}
             </h3>
             {isEditing && (
-              <button type="button" onClick={resetForm} className="text-slate-400 hover:text-white cursor-pointer"><X className="w-4 h-4" /></button>
+              <button type="button" onClick={resetForm} className="text-slate-500 dark:text-slate-400 hover:text-white cursor-pointer"><X className="w-4 h-4" /></button>
             )}
           </div>
 
           <div>
-            <label className="block text-[11px] font-semibold text-slate-400 mb-1">USERNAME</label>
-            <input type="text" required placeholder="Username Akun" value={username} onChange={e => setUsername(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none" />
+            <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">USERNAME</label>
+            <input type="text" required placeholder="Username Akun" value={username} onChange={e => setUsername(e.target.value)} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-800 dark:text-white focus:outline-none" />
           </div>
 
           <div>
-            <label className="block text-[11px] font-semibold text-slate-400 mb-1">PASSWORD {isEditing && '(Ketik Baru untuk Ubah)'}</label>
-            <input type="password" required placeholder="Ketik Password Baru" value={password} onChange={e => setPassword(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none" />
+            <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">PASSWORD {isEditing && '(Ketik Baru untuk Ubah)'}</label>
+            <input type="password" required placeholder="Ketik Password Baru" value={password} onChange={e => setPassword(e.target.value)} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-800 dark:text-white focus:outline-none" />
           </div>
 
           <div>
-            <label className="block text-[11px] font-semibold text-slate-400 mb-1">HAK AKSES ROLE</label>
-            <select value={role} onChange={e => setRole(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none">
+            <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">HAK AKSES ROLE</label>
+            <select value={role} onChange={e => setRole(e.target.value)} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-800 dark:text-white focus:outline-none">
               <option value="User">User</option>
               <option value="Admin">Admin</option>
               <option value="SPV">SPV</option>
             </select>
           </div>
 
-          <div className="border-t border-slate-700/60 pt-2 space-y-3">
+          <div className="border-t border-sky-200/60 dark:border-slate-700/60 pt-2 space-y-3">
             <p className="text-[10px] font-bold font-mono text-amber-400 uppercase tracking-wide">📦 Sinkronisasi Profil Karyawan</p>
             
             <div>
-              <label className="block text-[10px] text-slate-400 mb-0.5">NOMOR PERNER</label>
-              <input type="text" required placeholder="Contoh: 112311" value={perner} onChange={e => setPerner(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none" />
+              <label className="block text-[10px] text-slate-500 dark:text-slate-400 mb-0.5">NOMOR PERNER</label>
+              <input type="text" required placeholder="Contoh: 112311" value={perner} onChange={e => setPerner(e.target.value)} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-800 dark:text-white focus:outline-none" />
             </div>
 
             <div>
-              <label className="block text-[10px] text-slate-400 mb-0.5">NAMA LENGKAP</label>
-              <input type="text" placeholder="Nama Lengkap Karyawan" value={namaPeserta} onChange={e => setNamaPeserta(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none" />
+              <label className="block text-[10px] text-slate-500 dark:text-slate-400 mb-0.5">NAMA LENGKAP</label>
+              <input type="text" placeholder="Nama Lengkap Karyawan" value={namaPeserta} onChange={e => setNamaPeserta(e.target.value)} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-800 dark:text-white focus:outline-none" />
             </div>
 
             <div>
-              <label className="block text-[10px] text-slate-400 mb-0.5">JABATAN</label>
-              <input type="text" placeholder="IT Support / Engineer" value={jobPosition} onChange={e => setJobPosition(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:outline-none" />
+              <label className="block text-[10px] text-slate-500 dark:text-slate-400 mb-0.5">JABATAN</label>
+              <input type="text" placeholder="IT Support / Engineer" value={jobPosition} onChange={e => setJobPosition(e.target.value)} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-800 dark:text-white focus:outline-none" />
             </div>
           </div>
 
@@ -254,13 +254,13 @@ export const UserSettings: React.FC = () => {
         </form>
 
         {/* TABEL DATA MANAJEMEN USER */}
-        <div className="lg:col-span-2 bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
+        <div className="lg:col-span-2 bg-white dark:bg-slate-800 rounded-xl border border-sky-200 dark:border-slate-700 overflow-hidden">
           {loading ? (
-            <p className="p-4 text-xs font-mono text-slate-500 animate-pulse">Menyelaraskan data...</p>
+            <p className="p-4 text-xs font-mono text-slate-400 dark:text-slate-500 animate-pulse">Menyelaraskan data...</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="bg-slate-850 text-slate-400 font-mono border-b border-slate-700">
+                <thead className="bg-sky-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400 font-mono border-b border-sky-200 dark:border-slate-700">
                   <tr>
                     <th className="p-3">Username</th>
                     <th className="p-3">PERNER</th>
@@ -269,14 +269,14 @@ export const UserSettings: React.FC = () => {
                     <th className="p-3 text-center">Aksi</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-700 text-slate-200">
+                <tbody className="divide-y divide-sky-200 dark:divide-slate-700 text-slate-700 dark:text-slate-200">
                   {usersList.length === 0 ? (
-                    <tr><td colSpan={5} className="p-4 text-center text-slate-500 font-mono">Belum ada akun terdaftar.</td></tr>
+                    <tr><td colSpan={5} className="p-4 text-center text-slate-400 dark:text-slate-500 font-mono">Belum ada akun terdaftar.</td></tr>
                   ) : (
                     usersList.map(u => (
-                      <tr key={u.username} className="hover:bg-slate-750/20 transition-colors">
-                        <td className="p-3 font-mono font-medium text-slate-300">{u.username}</td>
-                        <td className="p-3 font-mono text-slate-400">{u.perner || '-'}</td>
+                      <tr key={u.username} className="hover:bg-sky-50 dark:hover:bg-slate-750/20 transition-colors">
+                        <td className="p-3 font-mono font-medium text-slate-600 dark:text-slate-300">{u.username}</td>
+                        <td className="p-3 font-mono text-slate-500 dark:text-slate-400">{u.perner || '-'}</td>
                         <td className="p-3 font-semibold text-sky-400">
                           {u.data_peserta?.nama_peserta || (
                             <span className="text-amber-500 text-[11px] font-mono border border-amber-500/20 bg-amber-500/5 px-1.5 py-0.5 rounded">

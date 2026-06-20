@@ -141,20 +141,20 @@ export const DataPeserta: React.FC = () => {
   }, []);
 
   return (
-    <div className="p-6 space-y-6 text-white">
+    <div className="p-6 space-y-6 text-slate-800 dark:text-white">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-sky-400">
             {isSpv ? 'Monitoring Karyawan' : 'Data Peserta & Akun'}
           </h1>
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-slate-500 dark:text-slate-400">
             {isSpv ? 'Mode Monitoring: Memantau data semua peserta.' : 'Manajemen peserta pelatihan dan pendaftaran akses login.'}
           </p>
         </div>
         <div className="flex space-x-2">
           <button 
             onClick={fetchPeserta}
-            className="p-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-slate-300 cursor-pointer"
+            className="p-2.5 bg-white dark:bg-slate-800 hover:bg-slate-700 border border-sky-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-300 cursor-pointer"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
           </button>
@@ -173,38 +173,38 @@ export const DataPeserta: React.FC = () => {
 
       {/* FORM INPUT DUA-DALAM-SATU */}
       {!isSpv && formOpen && (
-        <form onSubmit={handleAddPesertaDanUser} className="bg-slate-800 p-6 rounded-xl border border-slate-700 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <form onSubmit={handleAddPesertaDanUser} className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-sky-200 dark:border-slate-700 grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">PERNER (Username)</label>
-            <input type="text" required value={perner} onChange={e => setPerner(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none focus:border-sky-500" placeholder="Contoh: 18062026" />
+            <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1">PERNER (Username)</label>
+            <input type="text" required value={perner} onChange={e => setPerner(e.target.value)} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-sm text-slate-800 dark:text-white focus:outline-none focus:border-sky-500" placeholder="Contoh: 18062026" />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">Nama Lengkap</label>
-            <input type="text" required value={nama} onChange={e => setNama(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none focus:border-sky-500" placeholder="Nama Lengkap" />
+            <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1">Nama Lengkap</label>
+            <input type="text" required value={nama} onChange={e => setNama(e.target.value)} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-sm text-slate-800 dark:text-white focus:outline-none focus:border-sky-500" placeholder="Nama Lengkap" />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">Gender</label>
-            <select value={gender} onChange={e => setGender(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none focus:border-sky-500">
+            <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1">Gender</label>
+            <select value={gender} onChange={e => setGender(e.target.value)} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-sm text-slate-800 dark:text-white focus:outline-none focus:border-sky-500">
               <option value="Laki-laki">Laki-laki</option>
               <option value="Perempuan">Perempuan</option>
             </select>
           </div>
           <div>
-            <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">Jabatan / Posisi</label>
-            <input type="text" required value={position} onChange={e => setPosition(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none focus:border-sky-500" placeholder="IT Support" />
+            <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1">Jabatan / Posisi</label>
+            <input type="text" required value={position} onChange={e => setPosition(e.target.value)} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-sm text-slate-800 dark:text-white focus:outline-none focus:border-sky-500" placeholder="IT Support" />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">Asal Perusahaan</label>
-            <input type="text" required value={asalPersero} onChange={e => setAsalPersero(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none focus:border-sky-500" placeholder="PT / Unit Kerja" />
+            <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1">Asal Perusahaan</label>
+            <input type="text" required value={asalPersero} onChange={e => setAsalPersero(e.target.value)} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-sm text-slate-800 dark:text-white focus:outline-none focus:border-sky-500" placeholder="PT / Unit Kerja" />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-slate-400 uppercase mb-1">Lokasi Kerja</label>
-            <input type="text" required value={lokasiPersero} onChange={e => setLokasiPersero(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none focus:border-sky-500" placeholder="Semarang" />
+            <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1">Lokasi Kerja</label>
+            <input type="text" required value={lokasiPersero} onChange={e => setLokasiPersero(e.target.value)} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-sm text-slate-800 dark:text-white focus:outline-none focus:border-sky-500" placeholder="Semarang" />
           </div>
-          <div className="md:col-span-3 border-t border-slate-700/60 pt-3 grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+          <div className="md:col-span-3 border-t border-sky-200/60 dark:border-slate-700/60 pt-3 grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
             <div className="md:col-span-2">
               <label className="block text-xs font-bold text-amber-400 uppercase mb-1">Password Default Login Sistem</label>
-              <input type="password" required value={passwordDefault} onChange={e => setPasswordDefault(e.target.value)} className="w-full bg-slate-900 border border-amber-500/30 rounded-lg p-2 text-sm text-white focus:outline-none focus:border-amber-400" placeholder="Ketik password awal akun karyawan..." />
+              <input type="password" required value={passwordDefault} onChange={e => setPasswordDefault(e.target.value)} className="w-full bg-sky-50 dark:bg-slate-900 border border-amber-500/30 rounded-lg p-2 text-sm text-slate-800 dark:text-white focus:outline-none focus:border-amber-400" placeholder="Ketik password awal akun karyawan..." />
             </div>
             <button type="submit" className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold p-2.5 rounded-lg text-sm transition-colors cursor-pointer flex items-center justify-center space-x-1">
               <Plus className="w-4 h-4" /> <span>Tambah Peserta</span>
@@ -214,14 +214,14 @@ export const DataPeserta: React.FC = () => {
       )}
 
       {/* VIEW TABEL INDUK */}
-      <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
+      <div className="bg-white dark:bg-slate-800 rounded-xl border border-sky-200 dark:border-slate-700 overflow-hidden">
         {loading ? (
-          <div className="p-6 text-center text-slate-500 font-mono">Menyelaraskan tabel...</div>
+          <div className="p-6 text-center text-slate-400 dark:text-slate-500 font-mono">Menyelaraskan tabel...</div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-850 border-b border-slate-700 text-xs font-semibold uppercase tracking-wider text-slate-400 font-mono">
+                <tr className="bg-sky-50 dark:bg-slate-900 border-b border-sky-200 dark:border-slate-700 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 font-mono">
                   <th className="p-4">ID</th>
                   <th className="p-4">PERNER / USERNAME</th>
                   <th className="p-4">Nama</th>
@@ -230,17 +230,17 @@ export const DataPeserta: React.FC = () => {
                   {!isSpv && <th className="p-4 text-center">Aksi</th>}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-700 text-sm text-slate-200">
+              <tbody className="divide-y divide-sky-200 dark:divide-slate-700 text-sm text-slate-700 dark:text-slate-200">
                 {pesertaList.length === 0 ? (
-                  <tr><td colSpan={isSpv ? 5 : 6} className="p-6 text-center text-slate-500">Belum ada data peserta.</td></tr>
+                  <tr><td colSpan={isSpv ? 5 : 6} className="p-6 text-center text-slate-400 dark:text-slate-500">Belum ada data peserta.</td></tr>
                 ) : (
                   pesertaList.map((item) => (
-                    <tr key={item.id_peserta} className="hover:bg-slate-750/30 transition-colors">
-                      <td className="p-4 font-mono text-xs text-slate-500">{item.id_peserta}</td>
+                    <tr key={item.id_peserta} className="hover:bg-sky-50 dark:hover:bg-slate-800 transition-colors">
+                      <td className="p-4 font-mono text-xs text-slate-400 dark:text-slate-500">{item.id_peserta}</td>
                       <td className="p-4 font-mono text-sky-400 font-medium">{item.perner}</td>
-                      <td className="p-4 font-semibold">{item.nama_peserta} <span className="text-xs font-normal text-slate-500">({item.gender === 'Laki-laki' ? 'L' : 'P'})</span></td>
-                      <td className="p-4 text-slate-300">{item.job_position}</td>
-                      <td className="p-4 text-slate-400">{item.asal_perusahaan} <span className="text-xs bg-slate-900 px-1.5 py-0.5 rounded text-slate-500 ml-1">{item.lokasi_perusahaan}</span></td>
+                      <td className="p-4 font-semibold">{item.nama_peserta} <span className="text-xs font-normal text-slate-400 dark:text-slate-500">({item.gender === 'Laki-laki' ? 'L' : 'P'})</span></td>
+                      <td className="p-4 text-slate-600 dark:text-slate-300">{item.job_position}</td>
+                      <td className="p-4 text-slate-500 dark:text-slate-400">{item.asal_perusahaan} <span className="text-xs bg-sky-50 dark:bg-slate-900 px-1.5 py-0.5 rounded text-slate-400 dark:text-slate-500 ml-1">{item.lokasi_perusahaan}</span></td>
                       
                       {!isSpv && (
                         <td className="p-4 text-center">

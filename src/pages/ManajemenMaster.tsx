@@ -113,13 +113,13 @@ const handleAddTempat = async (e: React.FormEvent) => {
   };
 
   return (
-    <div className="p-6 space-y-6 text-white">
+    <div className="p-6 space-y-6 text-slate-800 dark:text-white">
       <div>
         <h1 className="text-2xl font-bold text-sky-400">Manajemen Data Master</h1>
-        <p className="text-sm text-slate-400">Konfigurasi parameter dasar pelatihan</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400">Konfigurasi parameter dasar pelatihan</p>
       </div>
 
-      <div className="flex border border-slate-700 bg-slate-800 p-1 rounded-xl max-w-lg">
+      <div className="flex border border-sky-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-1 rounded-xl max-w-lg">
         <button 
           type="button" 
           onClick={() => setActiveTab('type')} 
@@ -148,29 +148,29 @@ const handleAddTempat = async (e: React.FormEvent) => {
       {/* TAB 1: TYPE PELATIHAN */}
       {!loading && activeTab === 'type' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <form onSubmit={handleAddType} className="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-4 h-fit">
+          <form onSubmit={handleAddType} className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-sky-200 dark:border-slate-700 space-y-4 h-fit">
             <h3 className="font-bold text-sky-400 text-sm uppercase font-mono">Tambah Macam Pelatihan</h3>
-            <input type="text" required placeholder="ID Pelatihan (contoh : 1)" value={idPelatihan} onChange={e => setIdPelatihan(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none" />
-            <input type="text" required placeholder="Nama Pelatihan" value={namaPelatihan} onChange={e => setNamaPelatihan(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none" />
+            <input type="text" required placeholder="ID Pelatihan (contoh : 1)" value={idPelatihan} onChange={e => setIdPelatihan(e.target.value)} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-sm text-slate-800 dark:text-white focus:outline-none" />
+            <input type="text" required placeholder="Nama Pelatihan" value={namaPelatihan} onChange={e => setNamaPelatihan(e.target.value)} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-sm text-slate-800 dark:text-white focus:outline-none" />
             
-            <select value={k3} onChange={e => setK3(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none">
+            <select value={k3} onChange={e => setK3(e.target.value)} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-sm text-slate-800 dark:text-white focus:outline-none">
               {K3_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
             </select>
             
-            <select value={tipe} onChange={e => setTipe(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none">
+            <select value={tipe} onChange={e => setTipe(e.target.value)} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-sm text-slate-800 dark:text-white focus:outline-none">
               {TIPE_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
             </select>
             
-            <select value={kategori} onChange={e => setKategori(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none">
+            <select value={kategori} onChange={e => setKategori(e.target.value)} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-sm text-slate-800 dark:text-white focus:outline-none">
               {KATEGORI_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
             </select>
             
             <button type="submit" className="w-full bg-sky-500 text-slate-950 py-2 rounded-lg font-bold text-sm cursor-pointer hover:bg-sky-400">Simpan Master Type</button>
           </form>
 
-          <div className="lg:col-span-2 bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
+          <div className="lg:col-span-2 bg-white dark:bg-slate-800 rounded-xl border border-sky-200 dark:border-slate-700 overflow-hidden">
             <table className="w-full text-left">
-              <thead className="bg-slate-850 text-xs font-mono border-b border-slate-700 text-slate-400">
+              <thead className="bg-sky-50 dark:bg-slate-900 text-xs font-mono border-b border-sky-200 dark:border-slate-700 text-slate-500 dark:text-slate-400">
                 <tr>
                   <th className="p-3">ID Code</th>
                   <th className="p-3">Nama Pelatihan</th>
@@ -178,29 +178,29 @@ const handleAddTempat = async (e: React.FormEvent) => {
                   <th className="p-3 text-center">Aksi</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-700 text-sm">
+              <tbody className="divide-y divide-sky-200 dark:divide-slate-700 text-sm">
                 {types.map(t => (
-                  <tr key={t.id_pelatihan} className="hover:bg-slate-750/20">
+                  <tr key={t.id_pelatihan} className="hover:bg-sky-50 dark:hover:bg-slate-750/20">
                     <td className="p-3 font-mono text-sky-400">{t.id_pelatihan}</td>
                     <td className="p-3">
                       {editingId === t.id_pelatihan ? (
-                        <input type="text" value={editFields.nama_pelatihan || ''} onChange={e => setEditFields({...editFields, nama_pelatihan: e.target.value})} className="bg-slate-900 border border-slate-700 rounded p-1 text-sm w-full text-white" />
+                        <input type="text" value={editFields.nama_pelatihan || ''} onChange={e => setEditFields({...editFields, nama_pelatihan: e.target.value})} className="bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded p-1 text-sm w-full text-slate-800 dark:text-white" />
                       ) : t.nama_pelatihan}
                     </td>
                     <td className="p-3 text-xs">
                       {editingId === t.id_pelatihan ? (
                         <div className="space-y-1">
-                          <select value={editFields.k3_nonk3 || 'K3'} onChange={e => setEditFields({...editFields, k3_nonk3: e.target.value})} className="bg-slate-900 text-white border border-slate-700 rounded p-0.5 text-xs block">
+                          <select value={editFields.k3_nonk3 || 'K3'} onChange={e => setEditFields({...editFields, k3_nonk3: e.target.value})} className="bg-sky-50 dark:bg-slate-900 text-slate-800 dark:text-white border border-sky-200 dark:border-slate-700 rounded p-0.5 text-xs block">
                             {K3_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
                           </select>
-                          <select value={editFields.tipe_pelatihan || ''} onChange={e => setEditFields({...editFields, tipe_pelatihan: e.target.value})} className="bg-slate-900 text-white border border-slate-700 rounded p-0.5 text-xs block">
+                          <select value={editFields.tipe_pelatihan || ''} onChange={e => setEditFields({...editFields, tipe_pelatihan: e.target.value})} className="bg-sky-50 dark:bg-slate-900 text-slate-800 dark:text-white border border-sky-200 dark:border-slate-700 rounded p-0.5 text-xs block">
                             {TIPE_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
                           </select>
                         </div>
                       ) : (
                         <div className="flex items-center space-x-2">
-                          <span className="bg-slate-900 px-1.5 py-0.5 rounded text-slate-300">{t.k3_nonk3}</span>
-                          <span className="text-slate-500 font-mono text-xs">{t.tipe_pelatihan}</span>
+                          <span className="bg-sky-50 dark:bg-slate-900 px-1.5 py-0.5 rounded text-slate-600 dark:text-slate-300">{t.k3_nonk3}</span>
+                          <span className="text-slate-400 dark:text-slate-500 font-mono text-xs">{t.tipe_pelatihan}</span>
                         </div>
                       )}
                     </td>
@@ -208,7 +208,7 @@ const handleAddTempat = async (e: React.FormEvent) => {
                       {editingId === t.id_pelatihan ? (
                         <div className="flex justify-center space-x-2">
                           <button type="button" onClick={() => handleUpdate('type_pelatihan', 'id_pelatihan', t.id_pelatihan)} className="text-emerald-400 hover:text-emerald-500 cursor-pointer"><Check className="w-4 h-4" /></button>
-                          <button type="button" onClick={() => setEditingId(null)} className="text-slate-400 hover:text-slate-500 cursor-pointer"><X className="w-4 h-4" /></button>
+                          <button type="button" onClick={() => setEditingId(null)} className="text-slate-500 dark:text-slate-400 hover:text-slate-500 cursor-pointer"><X className="w-4 h-4" /></button>
                         </div>
                       ) : (
                         <div className="flex justify-center space-x-2">
@@ -228,36 +228,36 @@ const handleAddTempat = async (e: React.FormEvent) => {
       {/* TAB 2: DATA TRAINER */}
       {!loading && activeTab === 'trainer' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <form onSubmit={handleAddTrainer} className="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-4 h-fit">
+          <form onSubmit={handleAddTrainer} className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-sky-200 dark:border-slate-700 space-y-4 h-fit">
             <h3 className="font-bold text-sky-400 text-sm uppercase font-mono">Tambah Trainer</h3>
-            <input type="text" required placeholder="Nama Trainer" value={namaTrainer} onChange={e => setNamaTrainer(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none" />
-            <input type="text" required placeholder="Asal Instansi" value={asalTrainer} onChange={e => setAsalTrainer(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none" />
+            <input type="text" required placeholder="Nama Trainer" value={namaTrainer} onChange={e => setNamaTrainer(e.target.value)} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-sm text-slate-800 dark:text-white focus:outline-none" />
+            <input type="text" required placeholder="Asal Instansi" value={asalTrainer} onChange={e => setAsalTrainer(e.target.value)} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-sm text-slate-800 dark:text-white focus:outline-none" />
             <button type="submit" className="w-full bg-sky-500 text-slate-950 py-2 rounded-lg font-bold text-sm hover:bg-sky-400 cursor-pointer">Simpan Trainer</button>
           </form>
-          <div className="lg:col-span-2 bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
+          <div className="lg:col-span-2 bg-white dark:bg-slate-800 rounded-xl border border-sky-200 dark:border-slate-700 overflow-hidden">
             <table className="w-full text-left">
-              <thead className="bg-slate-850 text-xs font-mono border-b border-slate-700 text-slate-400">
+              <thead className="bg-sky-50 dark:bg-slate-900 text-xs font-mono border-b border-sky-200 dark:border-slate-700 text-slate-500 dark:text-slate-400">
                 <tr><th className="p-3">ID SEQ</th><th className="p-3">Nama Trainer</th><th className="p-3">Asal Perusahaan</th><th className="p-3 text-center">Aksi</th></tr>
               </thead>
-              <tbody className="divide-y divide-slate-700 text-sm">
+              <tbody className="divide-y divide-sky-200 dark:divide-slate-700 text-sm">
                 {trainers.map(tr => (
-                  <tr key={tr.id_trainer} className="hover:bg-slate-750/20">
-                    <td className="p-3 text-slate-500 font-mono text-xs">{tr.id_trainer}</td>
+                  <tr key={tr.id_trainer} className="hover:bg-sky-50 dark:hover:bg-slate-750/20">
+                    <td className="p-3 text-slate-400 dark:text-slate-500 font-mono text-xs">{tr.id_trainer}</td>
                     <td className="p-3">
                       {editingId === tr.id_trainer ? (
-                        <input type="text" value={editFields.nama_trainer || ''} onChange={e => setEditFields({...editFields, nama_trainer: e.target.value})} className="bg-slate-900 border border-slate-700 rounded p-1 text-sm text-white w-full" />
+                        <input type="text" value={editFields.nama_trainer || ''} onChange={e => setEditFields({...editFields, nama_trainer: e.target.value})} className="bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded p-1 text-sm text-slate-800 dark:text-white w-full" />
                       ) : tr.nama_trainer}
                     </td>
-                    <td className="p-3 text-slate-300">
+                    <td className="p-3 text-slate-600 dark:text-slate-300">
                       {editingId === tr.id_trainer ? (
-                        <input type="text" value={editFields.asal_perusahaan || ''} onChange={e => setEditFields({...editFields, asal_perusahaan: e.target.value})} className="bg-slate-900 border border-slate-700 rounded p-1 text-sm text-white w-full" />
+                        <input type="text" value={editFields.asal_perusahaan || ''} onChange={e => setEditFields({...editFields, asal_perusahaan: e.target.value})} className="bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded p-1 text-sm text-slate-800 dark:text-white w-full" />
                       ) : tr.asal_perusahaan || '-'}
                     </td>
                     <td className="p-3 text-center">
                       {editingId === tr.id_trainer ? (
                         <div className="flex justify-center space-x-2">
                           <button type="button" onClick={() => handleUpdate('data_trainer', 'id_trainer', tr.id_trainer)} className="text-emerald-400 hover:text-emerald-500 cursor-pointer"><Check className="w-4 h-4" /></button>
-                          <button type="button" onClick={() => setEditingId(null)} className="text-slate-400 hover:text-slate-500 cursor-pointer"><X className="w-4 h-4" /></button>
+                          <button type="button" onClick={() => setEditingId(null)} className="text-slate-500 dark:text-slate-400 hover:text-slate-500 cursor-pointer"><X className="w-4 h-4" /></button>
                         </div>
                       ) : (
                         <div className="flex justify-center space-x-2">
@@ -277,30 +277,30 @@ const handleAddTempat = async (e: React.FormEvent) => {
       {/* TAB 3: TEMPAT PELATIHAN */}
       {!loading && activeTab === 'tempat' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <form onSubmit={handleAddTempat} className="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-4 h-fit">
+          <form onSubmit={handleAddTempat} className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-sky-200 dark:border-slate-700 space-y-4 h-fit">
             <h3 className="font-bold text-sky-400 text-sm uppercase font-mono">Tambah Tempat Pelatihan</h3>
-            <input type="text" required placeholder="Nama Ruang / Lokasi" value={lokasi} onChange={e => setLokasi(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none" />
+            <input type="text" required placeholder="Nama Ruang / Lokasi" value={lokasi} onChange={e => setLokasi(e.target.value)} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-sm text-slate-800 dark:text-white focus:outline-none" />
             <button type="submit" className="w-full bg-sky-500 text-slate-950 py-2 rounded-lg font-bold text-sm hover:bg-sky-400 cursor-pointer">Simpan Tempat</button>
           </form>
-          <div className="lg:col-span-2 bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
+          <div className="lg:col-span-2 bg-white dark:bg-slate-800 rounded-xl border border-sky-200 dark:border-slate-700 overflow-hidden">
             <table className="w-full text-left">
-              <thead className="bg-slate-850 text-xs font-mono border-b border-slate-700 text-slate-400">
+              <thead className="bg-sky-50 dark:bg-slate-900 text-xs font-mono border-b border-sky-200 dark:border-slate-700 text-slate-500 dark:text-slate-400">
                 <tr><th className="p-3">ID SEQ</th><th className="p-3">Lokasi Ruangan</th><th className="text-center">Aksi</th></tr>
               </thead>
-              <tbody className="divide-y divide-slate-700 text-sm">
+              <tbody className="divide-y divide-sky-200 dark:divide-slate-700 text-sm">
                 {tempats.map(tp => (
-                  <tr key={tp.id_lokasi} className="hover:bg-slate-750/20">
-                    <td className="p-3 text-slate-500 font-mono text-xs">{tp.id_lokasi}</td>
-                    <td className="p-3 font-semibold text-slate-200">
+                  <tr key={tp.id_lokasi} className="hover:bg-sky-50 dark:hover:bg-slate-750/20">
+                    <td className="p-3 text-slate-400 dark:text-slate-500 font-mono text-xs">{tp.id_lokasi}</td>
+                    <td className="p-3 font-semibold text-slate-700 dark:text-slate-200">
                       {editingId === tp.id_lokasi ? (
-                        <input type="text" value={editFields.lokasi_pelatihan || ''} onChange={e => setEditFields({...editFields, lokasi_pelatihan: e.target.value})} className="bg-slate-900 border border-slate-700 rounded p-1 text-sm text-white w-full" />
+                        <input type="text" value={editFields.lokasi_pelatihan || ''} onChange={e => setEditFields({...editFields, lokasi_pelatihan: e.target.value})} className="bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded p-1 text-sm text-slate-800 dark:text-white w-full" />
                       ) : tp.lokasi_pelatihan}
                     </td>
                     <td className="p-3 text-center">
                       {editingId === tp.id_lokasi ? (
                         <div className="flex justify-center space-x-2">
                           <button type="button" onClick={() => handleUpdate('tempat_pelatihan', 'id_lokasi', tp.id_lokasi)} className="text-emerald-400 hover:text-emerald-500 cursor-pointer"><Check className="w-4 h-4" /></button>
-                          <button type="button" onClick={() => setEditingId(null)} className="text-slate-400 hover:text-slate-500 cursor-pointer"><X className="w-4 h-4" /></button>
+                          <button type="button" onClick={() => setEditingId(null)} className="text-slate-500 dark:text-slate-400 hover:text-slate-500 cursor-pointer"><X className="w-4 h-4" /></button>
                         </div>
                       ) : (
                         <div className="flex justify-center space-x-2">

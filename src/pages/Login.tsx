@@ -63,10 +63,10 @@ const handleLogin = async (e: React.FormEvent) => {
   };
   
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-900 px-4 text-white">
-      <div className="w-full max-w-md rounded-2xl bg-slate-800 p-8 shadow-2xl border border-slate-700">
+    <div className="flex min-h-screen items-center justify-center bg-sky-50 dark:bg-slate-900 px-4 text-slate-800 dark:text-white">
+      <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 p-8 shadow-2xl border border-sky-200 dark:border-slate-700">
         <h2 className="text-center text-3xl font-extrabold text-sky-400 mb-2">Trainify</h2>
-        <p className="text-center text-sm text-slate-400 mb-6">Training Tracking System</p>
+        <p className="text-center text-sm text-slate-500 dark:text-slate-400 mb-6">Training Tracking System</p>
         
         {errorMsg && (
           <div className="mb-4 bg-red-500/10 border border-red-500/30 p-3 rounded-lg text-sm text-red-400">
@@ -81,7 +81,7 @@ const handleLogin = async (e: React.FormEvent) => {
             required 
             value={username} 
             onChange={e => setUsername(e.target.value)} 
-            className="w-full rounded-lg bg-slate-900 border border-slate-700 p-2.5 text-sm focus:outline-none focus:border-sky-500" 
+            className="w-full rounded-lg bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 p-2.5 text-sm focus:outline-none focus:border-sky-500" 
           />
           <input 
             type="password" 
@@ -89,7 +89,7 @@ const handleLogin = async (e: React.FormEvent) => {
             required 
             value={password} 
             onChange={e => setPassword(e.target.value)} 
-            className="w-full rounded-lg bg-slate-900 border border-slate-700 p-2.5 text-sm focus:outline-none focus:border-sky-500" 
+            className="w-full rounded-lg bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 p-2.5 text-sm focus:outline-none focus:border-sky-500" 
           />
           <button 
             type="submit" 

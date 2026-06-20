@@ -65,29 +65,29 @@ export const HasilPenilaianUser: React.FC = () => {
     fetchVerifiedScores();
   }, [user]);
 
-  if (loading) return <div className="p-6 text-slate-400 font-mono text-sm">Menyelaraskan hasil pelatihan...</div>;
+  if (loading) return <div className="p-6 text-slate-500 dark:text-slate-400 font-mono text-sm">Menyelaraskan hasil pelatihan...</div>;
 
   return (
-    <div className="p-6 space-y-6 text-white">
+    <div className="p-6 space-y-6 text-slate-800 dark:text-white">
       <div>
         <h1 className="text-2xl font-bold text-sky-400">Hasil Penilaian Pelatihan</h1>
-        <p className="text-sm text-slate-400">Hasil pelatihan dan capaian kepatuhan jam Anda</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400">Hasil pelatihan dan capaian kepatuhan jam Anda</p>
       </div>
 
       {/* Rangkuman Metrik Kompetensi */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-slate-800 p-5 rounded-xl border border-slate-700 flex items-center space-x-4">
+        <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-sky-200 dark:border-slate-700 flex items-center space-x-4">
           <div className="p-3 bg-sky-500/10 rounded-lg text-sky-400"><Award className="w-6 h-6" /></div>
           <div>
-            <p className="text-xs text-slate-400 font-mono uppercase">Pelatihan Lulus</p>
-            <h3 className="text-2xl font-bold text-slate-100">{verifiedList.filter(v => v.status === 'Lulus').length} Kelas</h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 font-mono uppercase">Pelatihan Lulus</p>
+            <h3 className="text-2xl font-bold text-slate-800 dark:text-slate-100">{verifiedList.filter(v => v.status === 'Lulus').length} Kelas</h3>
           </div>
         </div>
-        <div className="bg-slate-800 p-5 rounded-xl border border-slate-700 flex items-center space-x-4">
+        <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-sky-200 dark:border-slate-700 flex items-center space-x-4">
           <div className="p-3 bg-emerald-500/10 rounded-lg text-emerald-400"><Clock className="w-6 h-6" /></div>
           <div>
-            <p className="text-xs text-slate-400 font-mono uppercase">Total Jam Pelatihan</p>
-            <h3 className="text-2xl font-bold text-emerald-400">{totalHours} / 10 Jam <span className="text-xs text-slate-500 font-normal">(Target Tahunan)</span></h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 font-mono uppercase">Total Jam Pelatihan</p>
+            <h3 className="text-2xl font-bold text-emerald-400">{totalHours} / 10 Jam <span className="text-xs text-slate-400 dark:text-slate-500 font-normal">(Target Tahunan)</span></h3>
           </div>
         </div>
       </div>
@@ -95,26 +95,26 @@ export const HasilPenilaianUser: React.FC = () => {
       {/* Grid Kartu Kelulusan */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {verifiedList.length === 0 ? (
-          <p className="text-slate-500 text-sm col-span-full">Belum ada transkrip kelulusan yang diverifikasi oleh admin unit.</p>
+          <p className="text-slate-400 dark:text-slate-500 text-sm col-span-full">Belum ada transkrip kelulusan yang diverifikasi oleh admin unit.</p>
         ) : (
           verifiedList.map((cert) => (
-            <div key={cert.id_hasil} className="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden shadow-lg hover:border-slate-600 transition-all flex flex-col justify-between">
+            <div key={cert.id_hasil} className="bg-white dark:bg-slate-800 border border-sky-200 dark:border-slate-700 rounded-xl overflow-hidden shadow-lg hover:border-slate-600 transition-all flex flex-col justify-between">
               <div className="p-5 space-y-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-[10px] font-mono bg-slate-900 px-2 py-0.5 text-slate-400 rounded">ID VERIFY: {cert.id_hasil}</span>
+                  <span className="text-[10px] font-mono bg-sky-50 dark:bg-slate-900 px-2 py-0.5 text-slate-500 dark:text-slate-400 rounded">ID VERIFY: {cert.id_hasil}</span>
                   <ShieldCheck className="w-5 h-5 text-sky-400" />
                 </div>
                 <div>
-                  <h4 className="font-mono text-xs text-slate-400">KODE SESI</h4>
-                  <p className="text-base font-bold text-slate-100">{cert.id_jadwal}</p>
+                  <h4 className="font-mono text-xs text-slate-500 dark:text-slate-400">KODE SESI</h4>
+                  <p className="text-base font-bold text-slate-800 dark:text-slate-100">{cert.id_jadwal}</p>
                 </div>
-                <div className="grid grid-cols-2 gap-2 bg-slate-900/40 p-2.5 rounded-lg border border-slate-700/50 text-center font-mono">
+                <div className="grid grid-cols-2 gap-2 bg-sky-50/70 dark:bg-slate-900/40 p-2.5 rounded-lg border border-sky-200/60 dark:border-slate-700/50 text-center font-mono">
                   <div>
-                    <p className="text-[10px] text-slate-500">PRE-TEST</p>
-                    <p className="text-sm font-bold text-slate-300">{cert.nilai_pre_test ?? '-'}</p>
+                    <p className="text-[10px] text-slate-400 dark:text-slate-500">PRE-TEST</p>
+                    <p className="text-sm font-bold text-slate-600 dark:text-slate-300">{cert.nilai_pre_test ?? '-'}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] text-slate-500">POST-TEST</p>
+                    <p className="text-[10px] text-slate-400 dark:text-slate-500">POST-TEST</p>
                     <p className="text-sm font-bold text-sky-400">{cert.nilai_post_test ?? '-'}</p>
                   </div>
                 </div>

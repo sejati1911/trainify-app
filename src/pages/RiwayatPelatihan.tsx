@@ -56,24 +56,24 @@ export const RiwayatPelatihan: React.FC = () => {
   }, [user]);
 
   return (
-    <div className="p-6 space-y-6 text-white">
+    <div className="p-6 space-y-6 text-slate-800 dark:text-white">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-sky-400">Riwayat Pelatihan</h1>
-          <p className="text-sm text-slate-400">Daftar riwayat pelatihan Anda</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">Daftar riwayat pelatihan Anda</p>
         </div>
         <button 
           onClick={fetchUserHistory} 
-          className="p-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-slate-300 transition-colors cursor-pointer"
+          className="p-2.5 bg-white dark:bg-slate-800 hover:bg-slate-700 border border-sky-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
         >
           <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
         </button>
       </div>
 
-      <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
+      <div className="bg-white dark:bg-slate-800 rounded-xl border border-sky-200 dark:border-slate-700 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left">
-            <thead className="bg-slate-850 text-xs font-mono border-b border-slate-700 text-slate-400 uppercase">
+            <thead className="bg-sky-50 dark:bg-slate-900 text-xs font-mono border-b border-sky-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 uppercase">
               <tr>
                 <th className="p-4">ID Log</th>
                 <th className="p-4">Kode Sesi</th>
@@ -82,19 +82,19 @@ export const RiwayatPelatihan: React.FC = () => {
                 <th className="p-4 text-center">Status Kelulusan</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-700 text-sm text-slate-200">
+            <tbody className="divide-y divide-sky-200 dark:divide-slate-700 text-sm text-slate-700 dark:text-slate-200">
               {loading ? (
                 <tr>
-                  <td colSpan={5} className="p-6 text-center text-slate-500 font-mono">Menyusun riwayat kompetensi...</td>
+                  <td colSpan={5} className="p-6 text-center text-slate-400 dark:text-slate-500 font-mono">Menyusun riwayat kompetensi...</td>
                 </tr>
               ) : history.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="p-6 text-center text-slate-500">Anda belum pernah terdaftar di jadwal pelatihan manapun.</td>
+                  <td colSpan={5} className="p-6 text-center text-slate-400 dark:text-slate-500">Anda belum pernah terdaftar di jadwal pelatihan manapun.</td>
                 </tr>
               ) : (
                 history.map((row) => (
-                  <tr key={row.id_hasil} className="hover:bg-slate-750/20 transition-colors">
-                    <td className="p-4 font-mono text-xs text-slate-500">{row.id_hasil}</td>
+                  <tr key={row.id_hasil} className="hover:bg-sky-50 dark:hover:bg-slate-750/20 transition-colors">
+                    <td className="p-4 font-mono text-xs text-slate-400 dark:text-slate-500">{row.id_hasil}</td>
                     <td className="p-4 font-mono text-sky-400 font-medium">{row.id_jadwal}</td>
                     <td className="p-4 text-center font-mono">{row.nilai_pre_test ?? '-'}</td>
                     <td className="p-4 text-center font-mono">{row.nilai_post_test ?? '-'}</td>

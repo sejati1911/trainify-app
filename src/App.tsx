@@ -66,7 +66,7 @@ const MainAppContent: React.FC = () => {
       case 'kelulusan':      return <HasilPenilaianUser />;
 
       default:
-        return <div className="p-6 font-mono text-xs text-slate-500">Halaman tidak ditemukan.</div>;
+        return <div className="p-6 font-mono text-xs text-slate-400 dark:text-slate-500">Halaman tidak ditemukan.</div>;
     }
   };
 
