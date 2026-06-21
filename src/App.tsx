@@ -49,20 +49,28 @@ const MainAppContent: React.FC = () => {
   }
 
   // Router internal pemetaan menu sidebar menuju render halaman utama
+  const currentRole = user.role ? String(user.role).toLowerCase() : 'user';
+
   const renderContent = () => {
     switch (activePage) {
       // BLOK NAVIGASI SISI ADMIN & MONITORING SPV (Menggunakan komponen yang sama tanpa mengubah nama)
       case 'dashboardAdmin': return <DashboardAdmin />;
       case 'peserta':         return <DataPeserta />;
-      case 'master':          return <ManajemenMaster />;
+      case 'master':
+        // Lapisan pertahanan tambahan: Manajemen Master hanya untuk Admin,
+        // meskipun secara normal SPV/User memang tidak memiliki tombol menuju halaman ini di sidebar.
+        if (currentRole !== 'admin') {
+          return <div className="p-6 font-mono text-xs text-red-400">Akses ditolak: halaman ini khusus Admin.</div>;
+        }
+        return <ManajemenMaster />;
       case 'jadwal':          return <JadwalPelatihan />;
       case 'penilaian':      return <ManajemenPenilaian />;
+      case 'riwayat':        return <RiwayatPelatihan />;
       case 'settings':       return <UserSettings />;
 
       // BLOK NAVIGASI SISI USER / KARYAWAN BIASA
       case 'dashboardUser':  return <DashboardUser />;
       case 'jadwalUser':     return <JadwalUser />;
-      case 'riwayat':        return <RiwayatPelatihan />;
       case 'kelulusan':      return <HasilPenilaianUser />;
 
       default:

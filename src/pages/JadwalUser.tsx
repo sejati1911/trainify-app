@@ -65,15 +65,11 @@ const { data: scheduleData, error: schedError } = await supabase
 
       if (regError) throw regError;
 
-      // 3. Masukkan record evaluasi ke hasil_pelatihan menggunakan id_peserta internal
-      await supabase
-        .from('hasil_pelatihan')
-        .insert([{ 
-          id_jadwal: idJadwal, 
-          id_peserta: pData.id_peserta, 
-          status: 'Tidak Lulus', 
-          is_verified: false 
-        }]);
+      // CATATAN: Record hasil_pelatihan TIDAK lagi dibuat otomatis di sini.
+      // Record baru akan dibuat (upsert) saat nilai pertama kali diinput,
+      // baik oleh admin (ManajemenPenilaian) maupun oleh karyawan sendiri (HasilPenilaianUser).
+      // Ini menghindari konflik "duplicate key" pada hasil_pelatihan_pkey
+      // yang sebelumnya terjadi karena record sudah ada duluan saat admin input nilai.
 
       alert('Berhasil mendaftar kelas pelatihan!');
       fetchJadwalAndRegistrations();

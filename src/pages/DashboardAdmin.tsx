@@ -221,7 +221,7 @@ export const DashboardAdmin: React.FC = () => {
             <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-sky-200 dark:border-slate-700 space-y-4">
               <div className="flex items-center space-x-2 text-sky-400">
                 <CheckCircle2 className="w-4 h-4" />
-                <h4 className="text-xs font-bold uppercase font-mono tracking-wider">Kepatuhan KPI (10 Jam/Tahun)</h4>
+                <h4 className="text-xs font-bold uppercase font-mono tracking-wider">Pemenuhan KPI (10 Jam/Tahun)</h4>
               </div>
               <div className="space-y-3 pt-2">
                 <div>

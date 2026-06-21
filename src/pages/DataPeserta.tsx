@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { useAuth } from '../context/AuthContext';
-import { Plus, Trash2, UserPlus, RefreshCw } from 'lucide-react';
+import { Plus, Trash2, UserPlus, RefreshCw, Edit2, X } from 'lucide-react';
 
 interface Peserta {
   id_peserta: number;
@@ -17,9 +17,15 @@ export const DataPeserta: React.FC = () => {
   const { user } = useAuth();
   const [pesertaList, setPesertaList] = useState<Peserta[]>([]);
   const [loading, setLoading] = useState(true);
-  
+
+  // CATATAN: SPV kini memiliki hak CRUD penuh setara Admin di halaman ini
+  // (sebelumnya read-only). Pembatasan SPV hanya berlaku di Manajemen Master.
   const currentRole = user && user.role ? String(user.role).toLowerCase() : 'user';
   const isSpv = currentRole === 'spv';
+
+  // State Edit Mode
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
 
   // State Form Input
   const [perner, setPerner] = useState('');
@@ -30,7 +36,7 @@ export const DataPeserta: React.FC = () => {
   const [lokasiPersero, setLokasiPersero] = useState('');
   const [formOpen, setFormOpen] = useState(false);
 
-  // State Tambahan untuk Password Akun Login Baru
+  // State Tambahan untuk Password Akun Login Baru (hanya dipakai saat mode tambah baru)
   const [passwordDefault, setPasswordDefault] = useState('');
 
   const fetchPeserta = async () => {
@@ -40,7 +46,7 @@ export const DataPeserta: React.FC = () => {
         .from('data_peserta')
         .select('*')
         .order('id_peserta', { ascending: true });
-      
+
       if (error) throw error;
       setPesertaList(data || []);
     } catch (err) {
@@ -50,11 +56,23 @@ export const DataPeserta: React.FC = () => {
     }
   };
 
+  const resetForm = () => {
+    setIsEditing(false);
+    setEditingId(null);
+    setPerner('');
+    setNama('');
+    setGender('Laki-laki');
+    setPosition('');
+    setAsalPersero('');
+    setLokasiPersero('');
+    setPasswordDefault('');
+    setFormOpen(false);
+  };
+
   const handleAddPesertaDanUser = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (isSpv) return alert('Akses ditolak: Supervisor tidak memiliki izin menambah data.');
     if (!passwordDefault) return alert('Sertakan password login default untuk akun karyawan ini!');
-    
+
     try {
       const parsedPerner = isNaN(Number(perner)) ? perner : Number(perner);
       const usernameInput = String(perner).trim();
@@ -102,16 +120,7 @@ export const DataPeserta: React.FC = () => {
       }
 
       alert(`Sukses mendaftarkan ${nama} beserta akun login sistem (Username: ${usernameInput})!`);
-      
-      // Reset Form
-      setPerner('');
-      setNama('');
-      setPosition('');
-      setAsalPersero('');
-      setLokasiPersero('');
-      setPasswordDefault('');
-      setFormOpen(false);
-      
+      resetForm();
       fetchPeserta();
     } catch (err: any) {
       alert(`Gagal memproses data: ${err.message}`);
@@ -119,8 +128,49 @@ export const DataPeserta: React.FC = () => {
     }
   };
 
+  const handleUpdatePeserta = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingId) return;
+
+    try {
+      const parsedPerner = isNaN(Number(perner)) ? perner : Number(perner);
+
+      const { error } = await supabase
+        .from('data_peserta')
+        .update({
+          perner: parsedPerner,
+          nama_peserta: nama,
+          gender,
+          job_position: position,
+          asal_perusahaan: asalPersero,
+          lokasi_perusahaan: lokasiPersero
+        })
+        .eq('id_peserta', editingId);
+
+      if (error) throw error;
+
+      alert(`Data peserta ${nama} berhasil diperbarui!`);
+      resetForm();
+      fetchPeserta();
+    } catch (err: any) {
+      alert(`Gagal memperbarui data: ${err.message}`);
+      console.error(err);
+    }
+  };
+
+  const startEdit = (item: Peserta) => {
+    setIsEditing(true);
+    setEditingId(item.id_peserta);
+    setPerner(String(item.perner));
+    setNama(item.nama_peserta);
+    setGender(item.gender || 'Laki-laki');
+    setPosition(item.job_position || '');
+    setAsalPersero(item.asal_perusahaan || '');
+    setLokasiPersero(item.lokasi_perusahaan || '');
+    setFormOpen(true);
+  };
+
   const handleDelete = async (id: number) => {
-    if (isSpv) return;
     if (!confirm('Menghapus peserta ini juga disarankan menghapus akun terkait di User Settings. Lanjutkan hapus profil?')) return;
     try {
       const { error } = await supabase
@@ -145,35 +195,42 @@ export const DataPeserta: React.FC = () => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-sky-400">
-            {isSpv ? 'Monitoring Karyawan' : 'Data Peserta & Akun'}
+            {isSpv ? 'Data Peserta (Supervisor)' : 'Data Peserta & Akun'}
           </h1>
           <p className="text-sm text-slate-500 dark:text-slate-400">
-            {isSpv ? 'Mode Monitoring: Memantau data semua peserta.' : 'Manajemen peserta pelatihan dan pendaftaran akses login.'}
+            {isSpv ? 'Anda dapat menambah, mengubah, dan menghapus data peserta.' : 'Manajemen peserta pelatihan dan pendaftaran akses login.'}
           </p>
         </div>
         <div className="flex space-x-2">
-          <button 
+          <button
             onClick={fetchPeserta}
             className="p-2.5 bg-white dark:bg-slate-800 hover:bg-slate-700 border border-sky-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-300 cursor-pointer"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
           </button>
-          
-          {!isSpv && (
-            <button
-              onClick={() => setFormOpen(!formOpen)}
-              className="flex items-center space-x-2 bg-sky-500 hover:bg-sky-400 text-slate-950 font-semibold px-4 py-2.5 rounded-lg text-sm cursor-pointer"
-            >
-              <UserPlus className="w-4 h-4" />
-              <span>{formOpen ? 'Tutup' : 'Tambah Peserta + User'}</span>
-            </button>
-          )}
+
+          <button
+            onClick={() => (formOpen ? resetForm() : setFormOpen(true))}
+            className="flex items-center space-x-2 bg-sky-500 hover:bg-sky-400 text-slate-950 font-semibold px-4 py-2.5 rounded-lg text-sm cursor-pointer"
+          >
+            <UserPlus className="w-4 h-4" />
+            <span>{formOpen ? 'Tutup' : 'Tambah Peserta + User'}</span>
+          </button>
         </div>
       </div>
 
-      {/* FORM INPUT DUA-DALAM-SATU */}
-      {!isSpv && formOpen && (
-        <form onSubmit={handleAddPesertaDanUser} className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-sky-200 dark:border-slate-700 grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* FORM INPUT: dipakai untuk Tambah Baru (sekaligus buat akun) ATAU Edit Data Peserta */}
+      {formOpen && (
+        <form onSubmit={isEditing ? handleUpdatePeserta : handleAddPesertaDanUser} className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-sky-200 dark:border-slate-700 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="md:col-span-3 flex justify-between items-center border-b border-sky-200/60 dark:border-slate-700/50 pb-2 -mt-1">
+            <h3 className="font-bold text-sky-400 text-xs uppercase font-mono tracking-wider">
+              {isEditing ? 'Edit Data Peserta' : 'Tambah Peserta Baru + Akun Login'}
+            </h3>
+            {isEditing && (
+              <button type="button" onClick={resetForm} className="text-slate-500 dark:text-slate-400 hover:text-white cursor-pointer"><X className="w-4 h-4" /></button>
+            )}
+          </div>
+
           <div>
             <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1">PERNER (Username)</label>
             <input type="text" required value={perner} onChange={e => setPerner(e.target.value)} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-sm text-slate-800 dark:text-white focus:outline-none focus:border-sky-500" placeholder="Contoh: 18062026" />
@@ -201,15 +258,30 @@ export const DataPeserta: React.FC = () => {
             <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1">Lokasi Kerja</label>
             <input type="text" required value={lokasiPersero} onChange={e => setLokasiPersero(e.target.value)} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-sm text-slate-800 dark:text-white focus:outline-none focus:border-sky-500" placeholder="Semarang" />
           </div>
-          <div className="md:col-span-3 border-t border-sky-200/60 dark:border-slate-700/60 pt-3 grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
-            <div className="md:col-span-2">
-              <label className="block text-xs font-bold text-amber-400 uppercase mb-1">Password Default Login Sistem</label>
-              <input type="password" required value={passwordDefault} onChange={e => setPasswordDefault(e.target.value)} className="w-full bg-sky-50 dark:bg-slate-900 border border-amber-500/30 rounded-lg p-2 text-sm text-slate-800 dark:text-white focus:outline-none focus:border-amber-400" placeholder="Ketik password awal akun karyawan..." />
+
+          {/* Password default hanya relevan saat menambah peserta baru (dengan akun login baru) */}
+          {!isEditing && (
+            <div className="md:col-span-3 border-t border-sky-200/60 dark:border-slate-700/60 pt-3 grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+              <div className="md:col-span-2">
+                <label className="block text-xs font-bold text-amber-400 uppercase mb-1">Password Default Login Sistem</label>
+                <input type="password" required value={passwordDefault} onChange={e => setPasswordDefault(e.target.value)} className="w-full bg-sky-50 dark:bg-slate-900 border border-amber-500/30 rounded-lg p-2 text-sm text-slate-800 dark:text-white focus:outline-none focus:border-amber-400" placeholder="Ketik password awal akun karyawan..." />
+              </div>
+              <button type="submit" className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold p-2.5 rounded-lg text-sm transition-colors cursor-pointer flex items-center justify-center space-x-1">
+                <Plus className="w-4 h-4" /> <span>Tambah Peserta</span>
+              </button>
             </div>
-            <button type="submit" className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold p-2.5 rounded-lg text-sm transition-colors cursor-pointer flex items-center justify-center space-x-1">
-              <Plus className="w-4 h-4" /> <span>Tambah Peserta</span>
-            </button>
-          </div>
+          )}
+
+          {isEditing && (
+            <div className="md:col-span-3 border-t border-sky-200/60 dark:border-slate-700/60 pt-3">
+              <button type="submit" className="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold p-2.5 rounded-lg text-sm transition-colors cursor-pointer flex items-center justify-center space-x-1">
+                <Edit2 className="w-4 h-4" /> <span>Simpan Perubahan Data</span>
+              </button>
+              <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-2 font-mono">
+                Catatan: kredensial login (username/password) tidak diubah di sini. Untuk itu gunakan halaman User Settings.
+              </p>
+            </div>
+          )}
         </form>
       )}
 
@@ -227,12 +299,12 @@ export const DataPeserta: React.FC = () => {
                   <th className="p-4">Nama</th>
                   <th className="p-4">Posisi</th>
                   <th className="p-4">Perusahaan</th>
-                  {!isSpv && <th className="p-4 text-center">Aksi</th>}
+                  <th className="p-4 text-center">Aksi</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-sky-200 dark:divide-slate-700 text-sm text-slate-700 dark:text-slate-200">
                 {pesertaList.length === 0 ? (
-                  <tr><td colSpan={isSpv ? 5 : 6} className="p-6 text-center text-slate-400 dark:text-slate-500">Belum ada data peserta.</td></tr>
+                  <tr><td colSpan={6} className="p-6 text-center text-slate-400 dark:text-slate-500">Belum ada data peserta.</td></tr>
                 ) : (
                   pesertaList.map((item) => (
                     <tr key={item.id_peserta} className="hover:bg-sky-50 dark:hover:bg-slate-800 transition-colors">
@@ -241,18 +313,25 @@ export const DataPeserta: React.FC = () => {
                       <td className="p-4 font-semibold">{item.nama_peserta} <span className="text-xs font-normal text-slate-400 dark:text-slate-500">({item.gender === 'Laki-laki' ? 'L' : 'P'})</span></td>
                       <td className="p-4 text-slate-600 dark:text-slate-300">{item.job_position}</td>
                       <td className="p-4 text-slate-500 dark:text-slate-400">{item.asal_perusahaan} <span className="text-xs bg-sky-50 dark:bg-slate-900 px-1.5 py-0.5 rounded text-slate-400 dark:text-slate-500 ml-1">{item.lokasi_perusahaan}</span></td>
-                      
-                      {!isSpv && (
-                        <td className="p-4 text-center">
-                          <button 
+
+                      <td className="p-4 text-center">
+                        <div className="flex justify-center items-center space-x-3">
+                          <button
+                            onClick={() => startEdit(item)}
+                            className="text-amber-400 hover:text-amber-500 cursor-pointer"
+                            title="Edit Data Peserta"
+                          >
+                            <Edit2 className="w-4 h-4" />
+                          </button>
+                          <button
                             onClick={() => handleDelete(item.id_peserta)}
                             className="p-1.5 bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white rounded transition-all cursor-pointer"
                             title="Hapus Profil Karyawan"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
-                        </td>
-                      )}
+                        </div>
+                      </td>
                     </tr>
                   ))
                 )}
