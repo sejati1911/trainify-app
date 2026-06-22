@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabaseClient';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import bcrypt from 'bcryptjs';
-import { Sun, Moon } from 'lucide-react';
+import { Sun, Moon, Eye, EyeOff } from 'lucide-react';
 
 export const Login: React.FC = () => {
   const { login } = useAuth();
@@ -12,6 +12,7 @@ export const Login: React.FC = () => {
   const [password, setPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,14 +85,28 @@ export const Login: React.FC = () => {
             onChange={e => setUsername(e.target.value)}
             className="w-full rounded-lg bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 p-2.5 text-sm focus:outline-none focus:border-sky-500"
           />
-          <input
-            type="password"
-            placeholder="Password"
-            required
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            className="w-full rounded-lg bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 p-2.5 text-sm focus:outline-none focus:border-sky-500"
-          />
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                placeholder="Password"
+                required
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                className="w-full rounded-lg bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 p-2.5 pr-12 text-sm focus:outline-none focus:border-sky-500"
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-sky-500 transition-colors"
+              >
+                {showPassword ? (
+                  <EyeOff className="w-5 h-5" />
+                ) : (
+                  <Eye className="w-5 h-5" />
+                )}
+              </button>
+            </div>
           <button
             type="submit"
             disabled={loading}
