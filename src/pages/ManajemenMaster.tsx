@@ -15,7 +15,6 @@ export const ManajemenMaster: React.FC = () => {
   const [trainers, setTrainers] = useState<any[]>([]);
   const [tempats, setTempats] = useState<any[]>([]);
 
-  const [idPelatihan, setIdPelatihan] = useState('');
   const [namaPelatihan, setNamaPelatihan] = useState('');
   const [k3, setK3] = useState('K3');
   const [tipe, setTipe] = useState('Code of Conduct');
@@ -48,14 +47,45 @@ export const ManajemenMaster: React.FC = () => {
     fetchData();
   }, [activeTab]);
 
-  const handleAddType = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const { error } = await supabase.from('type_pelatihan').insert([{ 
-      id_pelatihan: idPelatihan, nama_pelatihan: namaPelatihan, k3_nonk3: k3, tipe_pelatihan: tipe, kategori_pelatihan: kategori 
-    }]);
-    if (error) alert(error.message);
-    else { setIdPelatihan(''); setNamaPelatihan(''); fetchData(); }
-  };
+  const generateNextIdPelatihan = async () => {
+  const { data, error } = await supabase
+    .from('type_pelatihan')
+    .select('id_pelatihan');
+
+  if (error || !data?.length) {
+    return '1';
+  }
+
+  const maxId = Math.max(
+    ...data.map(item => Number(item.id_pelatihan) || 0)
+  );
+
+  return String(maxId + 1);
+};
+const handleAddType = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  const nextId = await generateNextIdPelatihan();
+
+  const { error } = await supabase
+    .from('type_pelatihan')
+    .insert([
+      {
+        id_pelatihan: nextId,
+        nama_pelatihan: namaPelatihan,
+        k3_nonk3: k3,
+        tipe_pelatihan: tipe,
+        kategori_pelatihan: kategori
+      }
+    ]);
+
+  if (error) {
+    alert(error.message);
+  } else {
+    setNamaPelatihan('');
+    fetchData();
+  }
+};
 
 const handleAddTrainer = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -150,7 +180,6 @@ const handleAddTempat = async (e: React.FormEvent) => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <form onSubmit={handleAddType} className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-sky-200 dark:border-slate-700 space-y-4 h-fit">
             <h3 className="font-bold text-sky-400 text-sm uppercase font-mono">Tambah Macam Pelatihan</h3>
-            <input type="text" required placeholder="ID Pelatihan (contoh : 1)" value={idPelatihan} onChange={e => setIdPelatihan(e.target.value)} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-sm text-slate-800 dark:text-white focus:outline-none" />
             <input type="text" required placeholder="Nama Pelatihan" value={namaPelatihan} onChange={e => setNamaPelatihan(e.target.value)} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-sm text-slate-800 dark:text-white focus:outline-none" />
             
             <select value={k3} onChange={e => setK3(e.target.value)} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-sm text-slate-800 dark:text-white focus:outline-none">
