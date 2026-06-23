@@ -164,8 +164,27 @@ export const Login: React.FC = () => {
 
       {/* FOOTER GLOBAL: halaman Login berada di luar SidebarLayout, sehingga footer ditambahkan terpisah di sini */}
       <footer className="absolute bottom-0 w-full p-4 text-center text-[11px] font-mono text-slate-400 dark:text-slate-500">
-        MASUKKAN FOOTER DI SINI
+        <div className="flex flex-col items-center">
+            <span className="mt-600 text-xs font-mono text-slate-500 dark:text-slate-400">
+              © 2026 Created by
+            </span>
+
+            <span
+              className="
+                mt-1
+                text-lg font-black
+                tracking-[0.5em]
+                text-sky-500 dark:text-sky-300
+                drop-shadow-[0_0_10px_rgba(56,189,248,0.6)]
+                transition-all duration-300
+                hover:scale-105
+              "
+            >
+              TEAM 4
+            </span>
+          </div>
       </footer>
+      
     </div>
   );
 };
