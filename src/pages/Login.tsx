@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabaseClient';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import bcrypt from 'bcryptjs';
+import trainifyLogo from '../assets/logo.png';
 import { Sun, Moon, Eye, EyeOff } from 'lucide-react';
 
 export const Login: React.FC = () => {
@@ -68,8 +69,15 @@ export const Login: React.FC = () => {
     <div className="relative flex min-h-screen items-center justify-center bg-sky-50 dark:bg-slate-900 px-4 text-slate-800 dark:text-white transition-colors duration-300">
       <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 p-8 shadow-2xl border border-sky-200 dark:border-slate-700">
         {/* SPACE LOGO: letakkan logo perusahaan di sini, di atas judul Trainify */}
-        <div className="mb-4 flex items-center justify-center h-16 w-full rounded-lg border border-dashed border-slate-300 dark:border-slate-600 text-[10px] font-mono text-slate-400 dark:text-slate-500 uppercase tracking-wider">
-          MASUKKAN LOGO DI SINI
+        <div className="flex items-center justify-center rounded-lg  font-mono text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+                  <img
+                    src={trainifyLogo}
+                    alt="Trainify Logo"
+                    className=" h-24 w-auto object-contain
+                                transition-all duration-300
+                                hover:scale-105
+                                dark:hover:drop-shadow-[0_0_12px_rgba(56,189,248,0.4)]"
+                  />
         </div>
         <h2 className="text-center text-3xl font-extrabold text-sky-400 mb-2">Trainify</h2>
         <p className="text-center text-sm text-slate-500 dark:text-slate-400 mb-6">Training Tracking System</p>
