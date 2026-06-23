@@ -65,8 +65,12 @@ export const Login: React.FC = () => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-sky-50 dark:bg-slate-900 px-4 text-slate-800 dark:text-white transition-colors duration-300">
+    <div className="relative flex min-h-screen items-center justify-center bg-sky-50 dark:bg-slate-900 px-4 text-slate-800 dark:text-white transition-colors duration-300">
       <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 p-8 shadow-2xl border border-sky-200 dark:border-slate-700">
+        {/* SPACE LOGO: letakkan logo perusahaan di sini, di atas judul Trainify */}
+        <div className="mb-4 flex items-center justify-center h-16 w-full rounded-lg border border-dashed border-slate-300 dark:border-slate-600 text-[10px] font-mono text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+          MASUKKAN LOGO DI SINI
+        </div>
         <h2 className="text-center text-3xl font-extrabold text-sky-400 mb-2">Trainify</h2>
         <p className="text-center text-sm text-slate-500 dark:text-slate-400 mb-6">Training Tracking System</p>
 
@@ -145,6 +149,11 @@ export const Login: React.FC = () => {
           </div>
         </button>
       </div>
+
+      {/* FOOTER GLOBAL: halaman Login berada di luar SidebarLayout, sehingga footer ditambahkan terpisah di sini */}
+      <footer className="absolute bottom-0 w-full p-4 text-center text-[11px] font-mono text-slate-400 dark:text-slate-500">
+        MASUKKAN FOOTER DI SINI
+      </footer>
     </div>
   );
 };

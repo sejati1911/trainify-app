@@ -47,7 +47,7 @@ export const HasilPenilaianUser: React.FC = () => {
       const { data: scoresData, error } = await supabase
         .from('hasil_pelatihan')
         .select(`
-          id_hasil, id_jadwal, nilai_pretest, nilai_posttest, nilai_akhir, status, is_verified,
+          id_hasil, id_jadwal, nilai_pretest, nilai_posttest, nilai_akhir, status, keterangan, is_verified,
           jadwal_pelatihan (tanggal_pelatihan, type_pelatihan (nama_pelatihan))
         `)
         .eq('id_peserta', userData.id_peserta)
@@ -283,6 +283,12 @@ export const HasilPenilaianUser: React.FC = () => {
                     <p className="text-sm font-bold text-sky-400">{cert.nilai_posttest ?? '-'}</p>
                   </div>
                 </div>
+                {cert.keterangan && (
+                  <div className="bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 rounded-lg p-2.5">
+                    <p className="text-[10px] font-mono text-amber-600 dark:text-amber-400 uppercase tracking-wider mb-1">Catatan Penilai</p>
+                    <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">{cert.keterangan}</p>
+                  </div>
+                )}
               </div>
               <div className={`p-3 text-center text-xs font-bold font-mono border-t ${
                 !cert.is_verified

@@ -29,6 +29,7 @@ export const DataPeserta: React.FC = () => {
 
   // State Form Input
   const [perner, setPerner] = useState('');
+  const [username, setUsername] = useState('');
   const [nama, setNama] = useState('');
   const [gender, setGender] = useState('Laki-laki');
   const [position, setPosition] = useState('');
@@ -60,6 +61,7 @@ export const DataPeserta: React.FC = () => {
     setIsEditing(false);
     setEditingId(null);
     setPerner('');
+    setUsername('');
     setNama('');
     setGender('Laki-laki');
     setPosition('');
@@ -72,12 +74,13 @@ export const DataPeserta: React.FC = () => {
   const handleAddPesertaDanUser = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!passwordDefault) return alert('Sertakan password login default untuk akun karyawan ini!');
+    if (!username.trim()) return alert('Username wajib diisi untuk akun login karyawan ini!');
 
     try {
       const parsedPerner = isNaN(Number(perner)) ? perner : Number(perner);
-      const usernameInput = String(perner).trim();
+      const usernameInput = username.trim();
 
-      // Cek dulu apakah username/PERNER ini sudah terdaftar di access_login
+      // Cek dulu apakah username ini sudah terdaftar di access_login
       const { data: existingUser } = await supabase
         .from('access_login')
         .select('username')
@@ -85,7 +88,7 @@ export const DataPeserta: React.FC = () => {
         .maybeSingle();
 
       if (existingUser) {
-        throw new Error(`PERNER/Username '${usernameInput}' sudah memiliki akun login di sistem!`);
+        throw new Error(`Username '${usernameInput}' sudah memiliki akun login di sistem!`);
       }
 
       // A. Masukkan data ke profil karyawan (data_peserta)
@@ -104,13 +107,15 @@ export const DataPeserta: React.FC = () => {
 
       if (errorPeserta) throw errorPeserta;
 
-      // B. Otomatis buatkan akun login di tabel access_login linked dengan USERNAME = PERNER
+      // B. Otomatis buatkan akun login di tabel access_login, dengan USERNAME independen
+      // dan PERNER disimpan terpisah untuk keperluan relasi ke data_peserta.
       const { error: errorAccess } = await supabase
         .from('access_login')
         .insert([{
           username: usernameInput,
           password: passwordDefault,
-          role: 'User' // Kunci otomatis sebagai 'User' sesuai format Capital Case database
+          role: 'User', // Kunci otomatis sebagai 'User' sesuai format Capital Case database
+          perner: parsedPerner
         }]);
 
       if (errorAccess) {
@@ -162,6 +167,7 @@ export const DataPeserta: React.FC = () => {
     setIsEditing(true);
     setEditingId(item.id_peserta);
     setPerner(String(item.perner));
+    setUsername('');
     setNama(item.nama_peserta);
     setGender(item.gender || 'Laki-laki');
     setPosition(item.job_position || '');
@@ -232,9 +238,15 @@ export const DataPeserta: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1">PERNER (Username)</label>
+            <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1">PERNER</label>
             <input type="text" required value={perner} onChange={e => setPerner(e.target.value)} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-sm text-slate-800 dark:text-white focus:outline-none focus:border-sky-500" placeholder="Contoh: 18062026" />
           </div>
+          {!isEditing && (
+            <div>
+              <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1">Username (Akun Login)</label>
+              <input type="text" required value={username} onChange={e => setUsername(e.target.value)} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-sm text-slate-800 dark:text-white focus:outline-none focus:border-sky-500" placeholder="Bebas, tidak harus sama dengan PERNER" />
+            </div>
+          )}
           <div>
             <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1">Nama Lengkap</label>
             <input type="text" required value={nama} onChange={e => setNama(e.target.value)} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-sm text-slate-800 dark:text-white focus:outline-none focus:border-sky-500" placeholder="Nama Lengkap" />
@@ -263,7 +275,7 @@ export const DataPeserta: React.FC = () => {
           {!isEditing && (
             <div className="md:col-span-3 border-t border-sky-200/60 dark:border-slate-700/60 pt-3 grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
               <div className="md:col-span-2">
-                <label className="block text-xs font-bold text-amber-400 uppercase mb-1">Password Default Login Sistem</label>
+                <label className="block text-xs font-bold text-amber-400 uppercase mb-1">Password Login Sistem</label>
                 <input type="password" required value={passwordDefault} onChange={e => setPasswordDefault(e.target.value)} className="w-full bg-sky-50 dark:bg-slate-900 border border-amber-500/30 rounded-lg p-2 text-sm text-slate-800 dark:text-white focus:outline-none focus:border-amber-400" placeholder="Ketik password awal akun karyawan..." />
               </div>
               <button type="submit" className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold p-2.5 rounded-lg text-sm transition-colors cursor-pointer flex items-center justify-center space-x-1">

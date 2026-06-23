@@ -79,6 +79,10 @@ export const SidebarLayout: React.FC<SidebarLayoutProps> = ({
         <div className="space-y-5 overflow-y-auto pr-1">
           <div className="px-2 py-1 flex items-center justify-between">
             <div>
+              {/* SPACE LOGO: letakkan logo perusahaan di sini, di atas judul Trainify */}
+              <div className="mb-2 flex items-center justify-center h-12 w-full rounded-lg border border-dashed border-slate-300 dark:border-slate-700 text-[10px] font-mono text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+                MASUKKAN LOGO DI SINI
+              </div>
               <h2 className="text-xl font-black tracking-wider text-sky-500 dark:text-sky-400">TRAINIFY</h2>
               <p className="text-[10px] font-mono text-slate-400 dark:text-slate-500 uppercase tracking-widest">Training Activity Tracker</p>
             </div>
@@ -225,8 +229,15 @@ export const SidebarLayout: React.FC<SidebarLayoutProps> = ({
       </aside>
 
       {/* RENDER VIEWPORT: padding-top ekstra di mobile agar tidak tertutup tombol hamburger fixed */}
-      <main className="flex-1 min-h-screen overflow-y-auto w-full md:ml-0 pt-16 md:pt-0">
-        {children}
+      <main className="flex-1 min-h-screen overflow-y-auto w-full md:ml-0 pt-16 md:pt-0 flex flex-col">
+        <div className="flex-1">
+          {children}
+        </div>
+
+        {/* FOOTER GLOBAL: tampil di setiap halaman karena SidebarLayout membungkus seluruh konten */}
+        <footer className="w-full p-4 text-center text-[11px] font-mono text-slate-400 dark:text-slate-500 border-t border-slate-200 dark:border-slate-800">
+          MASUKKAN FOOTER DI SINI
+        </footer>
       </main>
 
     </div>
