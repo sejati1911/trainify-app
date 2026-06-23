@@ -256,7 +256,10 @@ export const HasilPenilaianUser: React.FC = () => {
           <p className="text-slate-400 dark:text-slate-500 text-sm col-span-full">Belum ada nilai pelatihan yang tercatat. Ikuti sesi pelatihan lalu input nilai Anda di sini.</p>
         ) : (
           allScores.map((cert) => (
-            <div key={cert.id_hasil} className="bg-white dark:bg-slate-800 border border-sky-200 dark:border-slate-700 rounded-xl overflow-hidden shadow-lg hover:border-slate-600 transition-all flex flex-col justify-between">
+            <div key={cert.id_hasil} className="bg-white dark:bg-slate-800 border border-sky-200 dark:border-slate-700 rounded-xl overflow-hidden shadow-lg   transition-all duration-300
+                                                                                                                                                                hover:border-sky-500
+                                                                                                                                                                hover:-translate-y-1
+                                                                                                                                                                dark:hover:shadow-[0_0_20px_rgba(56,189,248,0.25)] flex flex-col justify-between">
               <div className="p-5 space-y-4">
                 <div className="flex justify-between items-center">
                   <span className="text-[10px] font-mono bg-sky-50 dark:bg-slate-900 px-2 py-0.5 text-slate-500 dark:text-slate-400 rounded">{cert.jadwal_pelatihan?.type_pelatihan?.nama_pelatihan || `SESI ${cert.id_jadwal}`}</span>

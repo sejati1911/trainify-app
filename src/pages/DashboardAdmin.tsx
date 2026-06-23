@@ -293,7 +293,7 @@ export const DashboardAdmin: React.FC = () => {
 
           {/* ================= BLOK 3: TABEL PROGRESS BAR JAM DIKLAT KARYAWAN ================= */}
           <div className="bg-white dark:bg-slate-800 rounded-xl border border-sky-200 dark:border-slate-700 overflow-hidden">
-            <div className="p-4 bg-sky-50 dark:bg-slate-900 border-b border-sky-200 dark:border-slate-700">
+            <div className="p-4 bg-sky-100 dark:bg-slate-900 border-b border-sky-200 dark:border-slate-700">
               <h3 className="text-xs font-bold text-sky-400 uppercase font-mono tracking-wider">Progres Capaian Jam Pelatihan Karyawan</h3>
             </div>
             <div className="overflow-x-auto">
@@ -315,7 +315,7 @@ export const DashboardAdmin: React.FC = () => {
                       // Hitung rasio terhadap target 10 jam (maksimal batas visual bar 100%)
                       const rasioKpi = Math.min((emp.total_jam / 10) * 100, 100);
                       return (
-                        <tr key={emp.id_peserta} className="hover:bg-sky-50 dark:hover:bg-slate-800 transition-colors">
+                        <tr key={emp.id_peserta} >
                           <td className="p-3 font-mono text-sky-400 font-medium">{emp.perner}</td>
                           <td className="p-3 font-semibold">{emp.nama_peserta}</td>
                           <td className="p-3 text-slate-500 dark:text-slate-400">{emp.job_position}</td>

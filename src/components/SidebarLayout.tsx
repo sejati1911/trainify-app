@@ -52,7 +52,9 @@ export const SidebarLayout: React.FC<SidebarLayoutProps> = ({
       {/* TOMBOL HAMBURGER: hanya tampak di mobile (md:hidden), fixed di pojok kiri atas */}
       <button
         onClick={() => setIsMobileOpen(true)}
-        className={`md:hidden fixed top-4 left-4 z-30 p-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-slate-700 dark:text-slate-200 shadow-md transition-opacity ${isMobileOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+        className={`md:hidden fixed top-4 left-4 z-30 p-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-slate-700 dark:text-slate-200 
+               hover:bg-sky-100 dark:hover:bg-slate-400  cursor-pointer
+          shadow-md transition-opacity ${isMobileOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
         aria-label="Buka menu navigasi"
       >
         <Menu className="w-5 h-5" />
@@ -62,7 +64,7 @@ export const SidebarLayout: React.FC<SidebarLayoutProps> = ({
       {isMobileOpen && (
         <div
           onClick={() => setIsMobileOpen(false)}
-          className="md:hidden fixed inset-0 bg-black/50 z-30"
+          className="md:hidden fixed inset-0 bg-black/50 z-30 "
           aria-hidden="true"
         />
       )}

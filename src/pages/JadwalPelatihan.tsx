@@ -329,7 +329,7 @@ const handleUpdateJadwal = async (id: number) => {
         <div className="lg:col-span-2 bg-white dark:bg-slate-800 rounded-xl border border-sky-200 dark:border-slate-700 overflow-hidden h-fit">
           <div className="overflow-x-auto">
             <table className="w-full text-left">
-              <thead className="bg-sky-50 dark:bg-slate-900 text-xs font-mono border-b border-sky-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 uppercase">
+              <thead className="bg-sky-200 dark:bg-slate-900 text-xs font-mono border-b border-sky-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 uppercase">
                 <tr>
                   <th className="p-3">ID</th>
                   <th className="p-3">Pelatihan</th>
@@ -340,7 +340,7 @@ const handleUpdateJadwal = async (id: number) => {
               </thead>
               <tbody className="divide-y divide-sky-200 dark:divide-slate-700 text-sm text-slate-700 dark:text-slate-200">
                 {schedules.map(s => (
-                  <tr key={s.id_jadwal} className="hover:bg-sky-50 dark:hover:bg-slate-750/20 transition-colors">
+                  <tr key={s.id_jadwal} className="hover:bg-sky-50 dark:hover:bg-slate-500/50 transition-colors">
                     <td className="p-3 font-mono text-xs text-slate-400 dark:text-slate-500 font-bold">{s.id_jadwal}</td>
                     
                     <td className="p-3">

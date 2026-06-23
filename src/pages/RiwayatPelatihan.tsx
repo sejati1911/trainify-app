@@ -351,7 +351,7 @@ const handleConfirmPrint = () => {
         <div className="bg-white dark:bg-slate-800 rounded-xl border border-sky-200 dark:border-slate-700 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left">
-              <thead className="bg-sky-50 dark:bg-slate-900 text-xs font-mono border-b border-sky-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 uppercase">
+              <thead className="bg-sky-200 dark:bg-slate-900 text-xs font-mono border-b border-sky-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 uppercase">
                 <tr>
                   <th className="p-4">Karyawan</th>
                   <th className="p-4">Pelatihan</th>
@@ -382,7 +382,7 @@ const handleConfirmPrint = () => {
                   </tr>
                 ) : (
                   filteredHistory.map((row) => (
-                    <tr key={row.id_hasil} className="hover:bg-sky-50 dark:hover:bg-slate-750/20 transition-colors">
+                    <tr key={row.id_hasil} className="hover:bg-sky-50 dark:hover:bg-slate-500/50 transition-colors">
                       <td className="p-4">
                         <p className="font-semibold text-slate-800 dark:text-slate-100">
                           {row.data_peserta?.nama_peserta || 'Guest'}

@@ -123,21 +123,21 @@ const handleAddTempat = async (e: React.FormEvent) => {
         <button 
           type="button" 
           onClick={() => setActiveTab('type')} 
-          className={activeTab === 'type' ? "flex items-center space-x-2 flex-1 justify-center py-2 text-sm font-bold rounded-lg bg-sky-500 text-slate-950 shadow-lg cursor-pointer" : "flex items-center space-x-2 flex-1 justify-center py-2 text-sm font-medium rounded-lg text-slate-400 hover:text-white cursor-pointer"}
+          className={activeTab === 'type' ? "flex items-center space-x-2 flex-1 justify-center py-2 text-sm font-bold rounded-lg bg-sky-500 text-slate-950 shadow-lg cursor-pointer" : "flex items-center space-x-2 flex-1 justify-center py-2 text-sm font-medium rounded-lg text-slate-500 hover:text-sky-400 dark:text-white cursor-pointer"}
         >
           <Library className="w-4 h-4" /> <span>Type</span>
         </button>
         <button 
           type="button" 
           onClick={() => setActiveTab('trainer')} 
-          className={activeTab === 'trainer' ? "flex items-center space-x-2 flex-1 justify-center py-2 text-sm font-bold rounded-lg bg-sky-500 text-slate-950 shadow-lg cursor-pointer" : "flex items-center space-x-2 flex-1 justify-center py-2 text-sm font-medium rounded-lg text-slate-400 hover:text-white cursor-pointer"}
+          className={activeTab === 'trainer' ? "flex items-center space-x-2 flex-1 justify-center py-2 text-sm font-bold rounded-lg bg-sky-500 text-slate-950 shadow-lg cursor-pointer" : "flex items-center space-x-2 flex-1 justify-center py-2 text-sm font-medium rounded-lg text-slate-500 hover:text-sky-400 dark:text-white cursor-pointer"}
         >
           <School className="w-4 h-4" /> <span>Trainer</span>
         </button>
         <button 
           type="button" 
           onClick={() => setActiveTab('tempat')} 
-          className={activeTab === 'tempat' ? "flex items-center space-x-2 flex-1 justify-center py-2 text-sm font-bold rounded-lg bg-sky-500 text-slate-950 shadow-lg cursor-pointer" : "flex items-center space-x-2 flex-1 justify-center py-2 text-sm font-medium rounded-lg text-slate-400 hover:text-white cursor-pointer"}
+          className={activeTab === 'tempat' ? "flex items-center space-x-2 flex-1 justify-center py-2 text-sm font-bold rounded-lg bg-sky-500 text-slate-950 shadow-lg cursor-pointer" : "flex items-center space-x-2 flex-1 justify-center py-2 text-sm font-medium rounded-lg text-slate-500 hover:text-sky-400 dark:text-white cursor-pointer"}
         >
           <MapPin className="w-4 h-4" /> <span>Tempat</span>
         </button>
@@ -170,7 +170,7 @@ const handleAddTempat = async (e: React.FormEvent) => {
 
           <div className="lg:col-span-2 bg-white dark:bg-slate-800 rounded-xl border border-sky-200 dark:border-slate-700 overflow-hidden">
             <table className="w-full text-left">
-              <thead className="bg-sky-50 dark:bg-slate-900 text-xs font-mono border-b border-sky-200 dark:border-slate-700 text-slate-500 dark:text-slate-400">
+              <thead className="bg-sky-200 dark:bg-slate-900 text-xs font-mono border-b border-sky-200 dark:border-slate-700 text-slate-500 dark:text-slate-400">
                 <tr>
                   <th className="p-3">ID Code</th>
                   <th className="p-3">Nama Pelatihan</th>
@@ -180,7 +180,7 @@ const handleAddTempat = async (e: React.FormEvent) => {
               </thead>
               <tbody className="divide-y divide-sky-200 dark:divide-slate-700 text-sm">
                 {types.map(t => (
-                  <tr key={t.id_pelatihan} className="hover:bg-sky-50 dark:hover:bg-slate-750/20">
+                  <tr key={t.id_pelatihan} className="hover:bg-sky-50 dark:hover:bg-slate-500/50  transition-colors">
                     <td className="p-3 font-mono text-sky-400">{t.id_pelatihan}</td>
                     <td className="p-3">
                       {editingId === t.id_pelatihan ? (
@@ -236,12 +236,12 @@ const handleAddTempat = async (e: React.FormEvent) => {
           </form>
           <div className="lg:col-span-2 bg-white dark:bg-slate-800 rounded-xl border border-sky-200 dark:border-slate-700 overflow-hidden">
             <table className="w-full text-left">
-              <thead className="bg-sky-50 dark:bg-slate-900 text-xs font-mono border-b border-sky-200 dark:border-slate-700 text-slate-500 dark:text-slate-400">
+              <thead className="bg-sky-200 dark:bg-slate-900 text-xs font-mono border-b border-sky-200 dark:border-slate-700 text-slate-500 dark:text-slate-400">
                 <tr><th className="p-3">ID SEQ</th><th className="p-3">Nama Trainer</th><th className="p-3">Asal Perusahaan</th><th className="p-3 text-center">Aksi</th></tr>
               </thead>
               <tbody className="divide-y divide-sky-200 dark:divide-slate-700 text-sm">
                 {trainers.map(tr => (
-                  <tr key={tr.id_trainer} className="hover:bg-sky-50 dark:hover:bg-slate-750/20">
+                  <tr key={tr.id_trainer} className="hover:bg-sky-50 dark:hover:bg-slate-500/50 transition-color">
                     <td className="p-3 text-slate-400 dark:text-slate-500 font-mono text-xs">{tr.id_trainer}</td>
                     <td className="p-3">
                       {editingId === tr.id_trainer ? (
@@ -284,12 +284,12 @@ const handleAddTempat = async (e: React.FormEvent) => {
           </form>
           <div className="lg:col-span-2 bg-white dark:bg-slate-800 rounded-xl border border-sky-200 dark:border-slate-700 overflow-hidden">
             <table className="w-full text-left">
-              <thead className="bg-sky-50 dark:bg-slate-900 text-xs font-mono border-b border-sky-200 dark:border-slate-700 text-slate-500 dark:text-slate-400">
+              <thead className="bg-sky-200 dark:bg-slate-900 text-xs font-mono border-b border-sky-200 dark:border-slate-700 text-slate-500 dark:text-slate-400">
                 <tr><th className="p-3">ID SEQ</th><th className="p-3">Lokasi Ruangan</th><th className="text-center">Aksi</th></tr>
               </thead>
               <tbody className="divide-y divide-sky-200 dark:divide-slate-700 text-sm">
                 {tempats.map(tp => (
-                  <tr key={tp.id_lokasi} className="hover:bg-sky-50 dark:hover:bg-slate-750/20">
+                  <tr key={tp.id_lokasi} className="hover:bg-sky-50 dark:hover:bg-slate-500/50">
                     <td className="p-3 text-slate-400 dark:text-slate-500 font-mono text-xs">{tp.id_lokasi}</td>
                     <td className="p-3 font-semibold text-slate-700 dark:text-slate-200">
                       {editingId === tp.id_lokasi ? (

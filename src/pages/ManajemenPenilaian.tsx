@@ -342,7 +342,7 @@ export const ManajemenPenilaian: React.FC = () => {
         <div className="lg:col-span-2 bg-white dark:bg-slate-800 rounded-xl border border-sky-200 dark:border-slate-700 overflow-hidden h-fit">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs text-slate-700 dark:text-slate-200">
-              <thead className="bg-sky-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400 uppercase font-mono border-b border-sky-200 dark:border-slate-700">
+              <thead className="bg-sky-200 dark:bg-slate-900 text-slate-500 dark:text-slate-400 uppercase font-mono border-b border-sky-200 dark:border-slate-700">
                 <tr>
                   <th className="p-3">Karyawan / Pelatihan</th>
                   <th className="p-3 text-center">Pre</th>
@@ -359,7 +359,7 @@ export const ManajemenPenilaian: React.FC = () => {
                   scoresList.map(s => {
                     const na = Number(s.nilai_akhir) || 0;
                     return (
-                      <tr key={s.id_hasil} className="hover:bg-sky-50 dark:hover:bg-slate-750/20 transition-colors">
+                      <tr key={s.id_hasil} className="hover:bg-sky-50 dark:hover:bg-slate-500/50 transition-colors">
                         <td className="p-3">
                           <p className="font-semibold text-slate-800 dark:text-slate-100">{s.data_peserta?.nama_peserta || 'Guest'}</p>
                           <p className="text-slate-400 dark:text-slate-500 text-[10px] font-mono">

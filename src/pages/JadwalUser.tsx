@@ -104,7 +104,7 @@ const { data: scheduleData, error: schedError } = await supabase
             schedules.map((item) => {
               const isRegistered = registeredIds.includes(Number(item.id_jadwal));
               return (
-                <div key={item.id_jadwal} className="bg-white dark:bg-slate-800 border border-sky-200 dark:border-slate-700 rounded-xl p-5 flex flex-col justify-between space-y-4 hover:border-slate-600 transition-all">
+                <div key={item.id_jadwal} className="bg-white dark:bg-slate-800 border border-sky-200 dark:border-slate-700 rounded-xl p-5 flex flex-col justify-between space-y-4   transition-all duration-300 hover:border-sky-500 hover:-translate-y-1 dark:hover:shadow-[0_0_20px_rgba(56,189,248,0.25)]">
                   <div className="space-y-2">
                     <div className="flex justify-between items-start">
                       <span className="text-xs font-mono px-2 py-0.5 bg-sky-50 dark:bg-slate-900 rounded text-sky-400 font-bold">KODE: {item.id_jadwal}</span>
