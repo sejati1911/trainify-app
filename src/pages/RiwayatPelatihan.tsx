@@ -1,8 +1,6 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { RefreshCw, Search, ShieldCheck, Hourglass, ChevronDown, Clock, Download } from 'lucide-react';
-import html2canvas from 'html2canvas-pro';
-import jsPDF from 'jspdf';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface TrainingRow {
@@ -58,11 +56,6 @@ export const RiwayatPelatihan: React.FC = () => {
   const [filterYear, setFilterYear]   = useState<string>('');
   const [filterMonth, setFilterMonth] = useState<string>('');
   const [showSummary, setShowSummary] = useState(false);
-  // ── State baru untuk preview & export PDF ──
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const [showPreviewModal, setShowPreviewModal] = useState(false);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const printRef = useRef<HTMLDivElement>(null);
 
   const fetchAllHistory = async () => {
     try {
@@ -124,72 +117,165 @@ export const RiwayatPelatihan: React.FC = () => {
     filterYear  ? filterYear : '',
   ].filter(Boolean).join(' ') || 'Semua Periode';
 
-const [exporting, setExporting] = useState(false);
+const handleCetakLaporan = () => {
+  const printDate = new Date().toLocaleString('id-ID', { dateStyle: 'long', timeStyle: 'short' });
 
-const handleGeneratePreview = async () => {
-  if (!printRef.current) return;
-  try {
-    setExporting(true);
-    const canvas = await html2canvas(printRef.current, {
-      scale: 2,
-      useCORS: true,
-      backgroundColor: '#ffffff',
-      windowWidth: printRef.current.scrollWidth,
-    });
-    canvasRef.current = canvas;
-    setPreviewImage(canvas.toDataURL('image/png'));
-    setShowPreviewModal(true);
-  } catch (err) {
-    console.error('Gagal membuat preview:', err);
-  } finally {
-    setExporting(false);
-  }
-};
+  const byJadwal: Record<number, TrainingRow[]> = {};
+  filteredHistory.forEach(row => {
+    const key = row.id_jadwal;
+    if (!byJadwal[key]) byJadwal[key] = [];
+    byJadwal[key].push(row);
+  });
 
-const handleConfirmDownload = () => {
-  const canvas = canvasRef.current;
-  if (!canvas) return;
+  const rekapJamBlock = showSummary && jamSummary.length > 0 ? `
+  <div style="margin-bottom:32px;page-break-inside:avoid;">
+    <h2 style="font-size:13px;font-weight:700;margin-bottom:10px;border-bottom:2px solid #e5e7eb;padding-bottom:6px;">
+      Rekap Total Jam Pelatihan per Peserta — ${activePeriod}
+    </h2>
+    <table style="width:100%;border-collapse:collapse;font-size:11px;">
+      <thead>
+        <tr style="background:#f3f4f6;">
+          <th style="padding:7px 8px;text-align:left;border-bottom:2px solid #d1d5db;color:#6b7280;font-weight:600;width:5%;">#</th>
+          <th style="padding:7px 8px;text-align:left;border-bottom:2px solid #d1d5db;color:#6b7280;font-weight:600;width:20%;">PERNER</th>
+          <th style="padding:7px 8px;text-align:left;border-bottom:2px solid #d1d5db;color:#6b7280;font-weight:600;">Nama Peserta</th>
+          <th style="padding:7px 8px;text-align:center;border-bottom:2px solid #d1d5db;color:#6b7280;font-weight:600;width:15%;">Jumlah Sesi</th>
+          <th style="padding:7px 8px;text-align:center;border-bottom:2px solid #d1d5db;color:#6b7280;font-weight:600;width:15%;">Total Jam</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${jamSummary.map((r, i) => `
+          <tr style="border-bottom:1px solid #e5e7eb;">
+            <td style="padding:6px 8px;color:#9ca3af;">${i + 1}</td>
+            <td style="padding:6px 8px;font-family:monospace;">${r.perner}</td>
+            <td style="padding:6px 8px;font-weight:500;">${r.nama_peserta}</td>
+            <td style="padding:6px 8px;text-align:center;">${r.jumlah_sesi} sesi</td>
+            <td style="padding:6px 8px;text-align:center;font-weight:700;">${formatJam(r.total_jam)}</td>
+          </tr>
+        `).join('')}
+        <tr style="background:#f3f4f6;font-weight:600;">
+          <td colspan="3" style="padding:7px 8px;">Total Keseluruhan</td>
+          <td style="padding:7px 8px;text-align:center;">${jamSummary.reduce((s, r) => s + r.jumlah_sesi, 0)} sesi</td>
+          <td style="padding:7px 8px;text-align:center;">${totalJamKeseluruhan}</td>
+        </tr>
+        </tbody>
+    </table>
+  </div>
+  <hr style="margin-bottom:24px;border:none;border-top:2px solid #e5e7eb;" />
+  ` : '';
 
-  const imgData = canvas.toDataURL('image/png');
-  const pdf = new jsPDF('p', 'mm', 'a4');
-  const pageWidth = pdf.internal.pageSize.getWidth();
-  const pageHeight = pdf.internal.pageSize.getHeight();
-  const imgWidth = pageWidth;
-  const imgHeight = (canvas.height * imgWidth) / canvas.width;
+  const jadwalBlocks = Object.entries(byJadwal).map(([idJadwal, rows]) => {
+    const first = rows[0];
+    const tgl = first.jadwal_pelatihan?.tanggal_pelatihan ?? '-';
+    const durasiBagian = (first.jadwal_pelatihan?.durasi_jam ?? '').split(':');
+    const durasi = durasiBagian.length >= 2
+      ? `${durasiBagian[0].padStart(2,'0')}:${durasiBagian[1].padStart(2,'0')}:00`
+      : '-';
+    const namaPelatihan = first.jadwal_pelatihan?.type_pelatihan?.nama_pelatihan ?? `Sesi ${idJadwal}`;
+    const hadir = rows.filter(r => r.status === 'Lulus' || r.is_verified).length;
+    const tidakHadir = rows.length - hadir;
 
-  let heightLeft = imgHeight;
-  let position = 0;
+    const pesertaRows = rows.map(r => `
+      <tr>
+        <td style="padding:6px 8px;border-bottom:1px solid #e5e7eb;">${r.data_peserta?.perner ?? '-'}</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #e5e7eb;">${r.data_peserta?.nama_peserta ?? '-'}</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #e5e7eb;text-align:center;">
+          ${r.is_verified
+            ? '<span style="color:#10b981;font-weight:600;">✔ Hadir</span>'
+            : r.status === 'Lulus'
+              ? '<span style="color:#10b981;font-weight:600;">✔ Lulus</span>'
+              : '<span style="color:#f59e0b;font-weight:600;">– Pending</span>'}
+        </td>
+      </tr>
+    `).join('');
 
-  pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-  heightLeft -= pageHeight;
-  while (heightLeft > 0) {
-    position = heightLeft - imgHeight;
-    pdf.addPage();
-    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-    heightLeft -= pageHeight;
-  }
+    return `
+      <div style="margin-bottom:32px;page-break-inside:avoid;">
+        <table style="width:100%;border-collapse:collapse;margin-bottom:8px;font-size:12px;">
+          <tr>
+            <td style="width:30%;font-weight:600;padding:3px 0;">Nama Pelatihan</td>
+            <td style="width:2%;">:</td>
+            <td>${namaPelatihan}</td>
+            <td style="width:20%;font-weight:600;">Tanggal</td>
+            <td style="width:2%;">:</td>
+            <td style="width:20%;">${tgl}</td>
+            <td style="width:10%;font-weight:600;">Lokasi</td>
+            <td style="width:2%;">:</td>
+            <td>-</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;padding:3px 0;">Waktu</td>
+            <td>:</td>
+            <td>-</td>
+            <td style="font-weight:600;">Durasi</td>
+            <td>:</td>
+            <td>${durasi}</td>
+            <td style="font-weight:600;">Biaya</td>
+            <td>:</td>
+            <td>Rp 0</td>
+          </tr>
+        </table>
+        <table style="width:100%;border-collapse:collapse;font-size:11px;">
+          <thead>
+            <tr style="background:#f3f4f6;">
+              <th style="padding:7px 8px;text-align:left;border-bottom:2px solid #d1d5db;color:#6b7280;font-weight:600;width:20%;">Perner</th>
+              <th style="padding:7px 8px;text-align:left;border-bottom:2px solid #d1d5db;color:#6b7280;font-weight:600;">Nama Peserta</th>
+              <th style="padding:7px 8px;text-align:center;border-bottom:2px solid #d1d5db;color:#6b7280;font-weight:600;width:25%;">Status Kehadiran</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.length === 0
+              ? '<tr><td colspan="3" style="padding:10px 8px;text-align:center;color:#9ca3af;">Belum ada peserta</td></tr>'
+              : pesertaRows}
+          </tbody>
+        </table>
+        <div style="margin-top:6px;font-size:11px;color:#6b7280;">
+          Total: ${rows.length} peserta | Hadir: ${hadir} | Tidak Hadir: ${tidakHadir} | Terdaftar: ${rows.length}
+        </div>
+        <hr style="margin-top:16px;border:none;border-top:1px solid #e5e7eb;" />
+      </div>
+    `;
+  }).join('');
 
-  const fileName = `Riwayat-Pelatihan_${activePeriod.replace(/\s+/g, '-')}.pdf`;
-  pdf.save(fileName);
-  setShowPreviewModal(false);
-};
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8"/>
+      <title>Laporan Jadwal Pelatihan</title>
+      <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: Arial, sans-serif; font-size: 12px; color: #111827; }
+        @media print { @page { margin: 16mm 14mm; } }
+        .header-top { display:flex; justify-content:space-between; font-size:10px; color:#6b7280; margin-bottom:20px; }
+        .report-title { text-align:center; margin-bottom:6px; }
+        .report-title h1 { font-size:16px; font-weight:700; }
+        .report-title p { font-size:11px; color:#6b7280; }
+        .content { margin-top:20px; }
+      </style>
+    </head>
+    <body>
+      <div class="header-top">
+        <span>${printDate}</span>
+        <span>Laporan Jadwal Pelatihan</span>
+      </div>
+      <div class="report-title">
+        <h1>Laporan Jadwal Pelatihan</h1>
+        <p>Dicetak pada: ${printDate} &nbsp;|&nbsp; Periode: ${activePeriod}</p>
+      </div>
+      <div class="content">
+        ${rekapJamBlock}
+        ${jadwalBlocks.length > 0 ? jadwalBlocks : '<p style="text-align:center;color:#9ca3af;margin-top:40px;">Tidak ada data untuk dicetak.</p>'}
+      </div>
+    </body>
+    </html>
+  `;
 
-const handleConfirmPrint = () => {
-  const imgData = previewImage;
-  if (!imgData) return;
   const win = window.open('', '_blank');
   if (!win) return;
-  win.document.write(`
-    <html>
-      <head><title>Cetak Riwayat Pelatihan</title></head>
-      <body style="margin:0">
-        <img src="${imgData}" style="width:100%;" />
-      </body>
-    </html>
-  `);
+  win.document.write(html);
   win.document.close();
   win.focus();
-  setTimeout(() => { win.print(); win.close(); }, 300);
+  setTimeout(() => { win.print(); }, 400);
 };
 
   return (
@@ -218,13 +304,14 @@ const handleConfirmPrint = () => {
           </button>
           
           <button
-            onClick={handleGeneratePreview}
-            disabled={exporting}
-            className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium bg-white dark:bg-slate-800 hover:bg-sky-50 dark:hover:bg-slate-700 border border-sky-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-300 transition-colors cursor-pointer disabled:opacity-50"
-          >
-          <Download className={`w-3.5 h-3.5 ${exporting ? 'animate-pulse' : ''}`} />
-          {exporting ? 'Menyiapkan preview...' : 'Preview & Cetak'}
-          </button>
+              onClick={handleCetakLaporan}
+              className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium bg-white dark:bg-slate-800 hover:bg-sky-50 dark:hover:bg-slate-700 border border-sky-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
+            >
+              <Download className="w-3.5 h-3.5" />
+              Cetak Laporan
+            </button>
+
+          
           <button
             onClick={fetchAllHistory}
             className="p-2.5 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-sky-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
@@ -282,9 +369,6 @@ const handleConfirmPrint = () => {
           />
         </div>
       </div>
-
-      {/* Printable area */}
-      <div ref={printRef}>
 
         {/* Rekap Total Jam */}
         {showSummary && (
@@ -449,40 +533,5 @@ const handleConfirmPrint = () => {
         </div>
 
       </div>
-      
-      {showPreviewModal && previewImage && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-slate-800 rounded-xl max-w-3xl w-full max-h-[90vh] flex flex-col overflow-hidden">
-            <div className="flex items-center justify-between p-4 border-b border-sky-200 dark:border-slate-700">
-              <h2 className="font-semibold text-slate-800 dark:text-white">Preview Riwayat Pelatihan</h2>
-              <button
-                onClick={() => setShowPreviewModal(false)}
-                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-sm cursor-pointer"
-              >
-                ✕ Tutup
-              </button>
-            </div>
-            <div className="flex-1 overflow-auto p-4 bg-slate-100 dark:bg-slate-900">
-              <img src={previewImage} alt="Preview" className="w-full border border-slate-300 shadow-sm" />
-            </div>
-            <div className="flex items-center justify-end gap-2 p-4 border-t border-sky-200 dark:border-slate-700">
-              <button
-                onClick={handleConfirmPrint}
-                className="px-4 py-2 text-sm font-medium border border-sky-300 dark:border-slate-600 rounded-lg text-slate-700 dark:text-slate-200 hover:bg-sky-50 dark:hover:bg-slate-700 cursor-pointer"
-              >
-                Cetak
-              </button>
-              <button
-                onClick={handleConfirmDownload}
-                className="px-4 py-2 text-sm font-medium bg-sky-500 hover:bg-sky-600 text-white rounded-lg cursor-pointer"
-              >
-                Download PDF
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-    </div>
-  );
+    );
 };
