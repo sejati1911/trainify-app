@@ -282,7 +282,7 @@ export const UserSettings: React.FC = () => {
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="bg-sky-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400 font-mono border-b border-sky-200 dark:border-slate-700">
+                <thead className="bg-sky-100 dark:bg-slate-900 text-slate-500 dark:text-slate-400 font-mono border-b border-sky-200 dark:border-slate-700">
                   <tr>
                     <th className="p-3">Username</th>
                     <th className="p-3">PERNER</th>
@@ -296,7 +296,7 @@ export const UserSettings: React.FC = () => {
                     <tr><td colSpan={5} className="p-4 text-center text-slate-400 dark:text-slate-500 font-mono">Belum ada akun terdaftar.</td></tr>
                   ) : (
                     usersList.map(u => (
-                      <tr key={u.username} className="hover:bg-sky-50 dark:hover:bg-slate-750/20 transition-colors">
+                      <tr key={u.username} className="hover:bg-sky-50 dark:hover:bg-slate-500/50 transition-colors">
                         <td className="p-3 font-mono font-medium text-slate-600 dark:text-slate-300">{u.username}</td>
                         <td className="p-3 font-mono text-slate-500 dark:text-slate-400">{u.perner || '-'}</td>
                         <td className="p-3 font-semibold text-sky-400">
