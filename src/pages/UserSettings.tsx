@@ -197,83 +197,127 @@ export const UserSettings: React.FC = () => {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="space-y-6">
         
         {/* FORM OPERASIONAL */}
-        <form onSubmit={handleSaveUser} className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-sky-200 dark:border-slate-700 space-y-3 h-fit">
-          <div className="flex justify-between items-center border-b border-sky-200/60 dark:border-slate-700/50 pb-2">
-            <h3 className="font-bold text-sky-400 text-xs uppercase font-mono tracking-wider">
-              {isEditing ? 'Koreksi Data Akun' : 'Daftarkan Akun Baru'}
-            </h3>
-            {isEditing && (
-              <button type="button" onClick={resetForm} className="text-slate-500 dark:text-slate-400 hover:text-white cursor-pointer"><X className="w-4 h-4" /></button>
-            )}
+        {isEditing && (
+        <form
+          onSubmit={handleSaveUser}
+          className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-sky-200 dark:border-slate-700">
+          <div className="flex justify-end items-center border-sky-200/60 dark:border-slate-700/50 pb-3 mb-4">
+            <button
+              type="button"
+              onClick={resetForm}
+              className="text-slate-500 hover:text-red-400 cursor-pointer">
+              <X/>
+             </button>
           </div>
 
-          <div>
-            <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">USERNAME</label>
-            <input type="text" required placeholder="Username Akun" value={username} onChange={e => setUsername(e.target.value)} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-800 dark:text-white focus:outline-none" />
-          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-          <div>
-            <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">PASSWORD {isEditing && '(Ketik Baru untuk Ubah)'}</label>
-            <input type="password" required placeholder="Ketik Password Baru" value={password} onChange={e => setPassword(e.target.value)} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-800 dark:text-white focus:outline-none" />
-          </div>
+            {/* KOLOM KIRI */}
+            <div className="space-y-3">
+              <h4 className="font-bold text-sky-400 text-xs uppercase border-b border-sky-200 dark:border-slate-700 pb-2">
+                Koreksi Data Akun
+              </h4>
 
-          <div>
-            <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">HAK AKSES ROLE</label>
-            <select value={role} onChange={e => setRole(e.target.value)} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-800 dark:text-white focus:outline-none">
-              <option value="User">User</option>
-              <option value="Admin">Admin</option>
-              <option value="SPV">SPV</option>
-            </select>
-          </div>
+              <div>
+                <label className="block text-xs text-slate-500 mb-1">
+                  Username
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={username}
+                  onChange={e => setUsername(e.target.value)}
+                  className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-sm"
+                />
+              </div>
 
-          <div className="border-t border-sky-200/60 dark:border-slate-700/60 pt-2 space-y-3">
-            <p className="text-[10px] font-bold font-mono text-amber-400 uppercase tracking-wide">📦 Sinkronisasi Profil Karyawan</p>
-            
-            <div>
-             
+              <div>
+                <label className="block text-xs text-slate-500 mb-1">
+                  Password Baru
+                </label>
+                <input
+                  type="password"
+                  required
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs text-slate-500 mb-1">
+                  Role
+                </label>
+                <select
+                  value={role}
+                  onChange={e => setRole(e.target.value)}
+                  className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-sm"
+                >
+                  <option value="User">User</option>
+                  <option value="Admin">Admin</option>
+                  <option value="SPV">SPV</option>
+                </select>
+              </div>
             </div>
 
-            <div>
-              <label className="block text-[10px] text-slate-500 dark:text-slate-400 mb-0.5">NOMOR PERNER</label>
-              <input
-                type="text"
-                readOnly
-                placeholder="Terisi otomatis"
-                value={perner}
-                className="w-full bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-500 dark:text-slate-400 focus:outline-none cursor-not-allowed"
-              />
+            {/* KOLOM KANAN */}
+            <div className="space-y-3">
+              <h4 className="font-bold text-amber-400 text-xs uppercase border-b border-sky-200 dark:border-slate-700 pb-2">
+                Sinkronisasi Profil Karyawan
+              </h4>
+
+              <div>
+                <label className="block text-xs text-slate-500 mb-1">
+                  PERNER
+                </label>
+                <input
+                  type="text"
+                  readOnly
+                  value={perner}
+                  className="w-full bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-sm cursor-not-allowed"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs text-slate-500 mb-1">
+                  Nama Karyawan
+                </label>
+                <input
+                  type="text"
+                  readOnly
+                  value={namaPeserta}
+                  className="w-full bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-sm cursor-not-allowed"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs text-slate-500 mb-1">
+                  Jabatan
+                </label>
+                <input
+                  type="text"
+                  readOnly
+                  value={jobPosition}
+                  className="w-full bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-sm cursor-not-allowed"
+                />
+              </div>
             </div>
 
-            <div>
-              <label className="block text-[10px] text-slate-500 dark:text-slate-400 mb-0.5">NAMA LENGKAP</label>
-              <input
-                type="text"
-                readOnly
-                placeholder="Terisi otomatis"
-                value={namaPeserta}
-                className="w-full bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-500 dark:text-slate-400 focus:outline-none cursor-not-allowed"
-              />
-            </div>
-
-            <div>
-              <label className="block text-[10px] text-slate-500 dark:text-slate-400 mb-0.5">JABATAN</label>
-              <input
-                type="text"
-                readOnly
-                placeholder="Terisi otomatis"
-                value={jobPosition}
-                className="w-full bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-500 dark:text-slate-400 focus:outline-none cursor-not-allowed"
-              />
-            </div>
           </div>
 
-          <button type="submit" className="w-full bg-sky-500 text-slate-950 py-2.5 rounded-lg font-bold text-xs hover:bg-sky-400 transition-all cursor-pointer">
-            {isEditing ? 'Simpan Pembaruan User' : 'Daftarkan Akun'}
-          </button>
+          <div className="mt-6 flex justify-end gap-2">
+            <button
+              type="submit"
+              className="px-4 py-2 rounded-lg bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold"
+            >
+              Simpan Perubahan
+            </button>
+          </div>
         </form>
+        )}
 
         {/* TABEL DATA MANAJEMEN USER */}
         <div className="lg:col-span-2 bg-white dark:bg-slate-800 rounded-xl border border-sky-200 dark:border-slate-700 overflow-hidden">
