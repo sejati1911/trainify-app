@@ -6,6 +6,7 @@ import { BookOpen, GraduationCap, CheckCircle, Clock, BarChart4 } from 'lucide-r
 export const DashboardUser: React.FC = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
+  const [displayName, setDisplayName] = useState('');
   const [userStats, setUserStats] = useState({
     totalDiikuti: 0,
     lulusCount: 0,
@@ -37,11 +38,14 @@ export const DashboardUser: React.FC = () => {
         // 1. Dapatkan id_peserta internal database
         const { data: pData } = await supabase
           .from('data_peserta')
-          .select('id_peserta')
+          .select('id_peserta, nama_peserta')
           .eq('perner', user.perner)
           .maybeSingle();
+          if (pData?.nama_peserta) {
+            setDisplayName(pData.nama_peserta);
+          }
 
-        if (pData?.id_peserta) {
+        if (pData?.nama_peserta) {
           // 2. Hitung total kelas terdaftar di peserta_jadwal
           const { count: countJadwal } = await supabase
             .from('peserta_jadwal')
@@ -113,7 +117,7 @@ export const DashboardUser: React.FC = () => {
       {/* Welcome Card Banner */}
       <div className="bg-gradient-to-r from-sky-50 to-white dark:from-slate-900 dark:to-slate-900 p-6 rounded-xl border border-sky-100 dark:border-slate-800 shadow-xl">
         <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">
-          Selamat Datang Kembali, <span className="text-sky-400 font-mono font-bold">{user?.username}</span>!
+          Selamat Datang Kembali, <span className="text-sky-400 font-mono font-bold">{displayName || user?.username || 'Peserta'}</span>!
         </h1>
         <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-mono">
           Nomor PERNER Anda: <span className="text-sky-400 font-semibold">{user?.perner || '-'}</span>

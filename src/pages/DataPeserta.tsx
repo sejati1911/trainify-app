@@ -335,7 +335,6 @@ export const DataPeserta: React.FC = () => {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-sky-200 dark:bg-slate-900 border-b border-sky-200 dark:border-slate-700 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 font-mono">
-                  <th className="p-4">ID</th>
                   <th className="p-4">PERNER / USERNAME</th>
                   <th className="p-4">Nama</th>
                   <th className="p-4">Posisi</th>
@@ -345,11 +344,10 @@ export const DataPeserta: React.FC = () => {
               </thead>
               <tbody className="divide-y divide-sky-200 dark:divide-slate-700 text-sm text-slate-700 dark:text-slate-200">
                 {pesertaList.length === 0 ? (
-                  <tr><td colSpan={6} className="p-6 text-center text-slate-400 dark:text-slate-500">Belum ada data peserta.</td></tr>
+                  <tr><td colSpan={5} className="p-6 text-center text-slate-400 dark:text-slate-500">Belum ada data peserta.</td></tr>
                 ) : (
                   pesertaList.map((item) => (
                     <tr key={item.id_peserta} className="hover:bg-sky-50 dark:hover:bg-slate-500/50 transition-colors">
-                      <td className="p-4 font-mono text-xs text-slate-400 dark:text-slate-500">{item.id_peserta}</td>
                       <td className="p-4 font-mono text-sky-400 font-medium">{item.perner}</td>
                       <td className="p-4 font-semibold">{item.nama_peserta} <span className="text-xs font-normal text-slate-400 dark:text-slate-500">({item.gender === 'Laki-laki' ? 'L' : 'P'})</span></td>
                       <td className="p-4 text-slate-600 dark:text-slate-300">{item.job_position}</td>

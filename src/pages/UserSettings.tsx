@@ -351,9 +351,15 @@ export const UserSettings: React.FC = () => {
                           )}
                         </td>
                         <td className="p-3">
-                          <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold font-mono ${
-                            u.role === 'Admin' || u.role === 'admin' ? 'bg-red-500/10 text-red-400' : u.role === 'SPV' || u.role === 'spv' ? 'bg-amber-500/10 text-amber-400' : 'bg-sky-500/10 text-sky-400'
-                          }`}>
+                          <span
+                            className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
+                              u.role?.toUpperCase() === 'ADMIN'
+                                ? 'bg-red-500/15 text-red-400 border-red-500/30 shadow-sm shadow-red-500/20'
+                                : u.role?.toUpperCase() === 'SPV'
+                                ? 'bg-purple-500/15 text-purple-400 border-purple-500/30 shadow-sm shadow-purple-500/20'
+                                : 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30 shadow-sm shadow-emerald-500/20'
+                            }`}
+                          >
                             {u.role}
                           </span>
                         </td>
