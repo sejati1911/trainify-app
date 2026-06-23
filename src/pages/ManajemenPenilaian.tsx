@@ -8,6 +8,7 @@ export const ManajemenPenilaian: React.FC = () => {
   const [scoresList, setScoresList] = useState<any[]>([]);
   const [pesertaList, setPesertaList] = useState<any[]>([]);
   const [jadwalList, setJadwalList] = useState<any[]>([]);
+  const [pesertaJadwalList, setPesertaJadwalList] = useState<any[]>([]); // relasi peserta yang terdaftar per jadwal (via perner)
   const [loading, setLoading] = useState(false);
   const [resetting, setResetting] = useState(false);
 
@@ -30,6 +31,31 @@ export const ManajemenPenilaian: React.FC = () => {
   const [liveKategoriPre, setLiveKategoriPre] = useState('-');
   const [liveKategoriPost, setLiveKategoriPost] = useState('-');
   const [liveStatus, setLiveStatus] = useState('-');
+
+  // FILTER PESERTA BERDASARKAN JADWAL TERPILIH:
+  // Hanya tampilkan peserta yang punya record di tabel peserta_jadwal untuk id_jadwal yang sedang dipilih.
+  // Relasi dijembatani lewat kolom "perner" (peserta_jadwal.perner === data_peserta.perner).
+  const filteredPesertaList = React.useMemo(() => {
+    if (isEditing) return pesertaList; // mode edit: select disabled, tampilkan semua agar nama tersimpan tetap terlihat
+    if (!idJadwal) return pesertaList; // belum pilih jadwal -> tampilkan semua (default)
+
+    const pernerTerdaftar = new Set(
+      pesertaJadwalList
+        .filter(pj => String(pj.id_jadwal) === String(idJadwal))
+        .map(pj => pj.perner)
+    );
+
+    return pesertaList.filter(p => pernerTerdaftar.has(p.perner));
+  }, [idJadwal, pesertaList, pesertaJadwalList, isEditing]);
+
+  // Jika jadwal diganti dan peserta yang sedang terpilih ternyata tidak terdaftar di jadwal baru,
+  // reset pilihan peserta supaya tidak ada inkonsistensi data (kecuali sedang mode edit).
+  useEffect(() => {
+    if (isEditing) return;
+    if (idPeserta && !filteredPesertaList.some(p => String(p.id_peserta) === String(idPeserta))) {
+      setIdPeserta('');
+    }
+  }, [idJadwal, filteredPesertaList, isEditing]);
 
   const hitungGrade = (nilai: number): string => {
     if (nilai >= 90) return 'A';
@@ -63,9 +89,13 @@ export const ManajemenPenilaian: React.FC = () => {
         jadwal_pelatihan (tanggal_pelatihan, type_pelatihan (nama_pelatihan))
       `).order('id_hasil', { ascending: false });
 
+      // Relasi peserta yang terdaftar di tiap jadwal pelatihan (dipakai untuk filter dropdown Nama Karyawan)
+      const { data: pjData } = await supabase.from('peserta_jadwal').select('id_peserta_jadwal, id_jadwal, perner, status');
+
       setPesertaList(pData || []);
       setJadwalList(jData || []);
       setScoresList(sData || []);
+      setPesertaJadwalList(pjData || []);
     } catch (err) {
       console.error(err);
     } finally {
@@ -235,19 +265,11 @@ export const ManajemenPenilaian: React.FC = () => {
         <form onSubmit={handleSave} className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-sky-200 dark:border-slate-700 space-y-3.5 h-fit">
           <div className="flex justify-between items-center border-b border-sky-200/60 dark:border-slate-700/50 pb-2">
             <h3 className="font-bold text-sky-400 text-xs uppercase font-mono tracking-wider">
-              {isEditing ? 'Koreksi Nilai / Edit Mode' : 'Entri Nilai Pelatihan'}
+              {isEditing ? 'Koreksi Nilai / Edit Mode' : 'Input Nilai Pelatihan'}
             </h3>
             {isEditing && (
               <button type="button" onClick={resetForm} className="text-slate-500 dark:text-slate-400 hover:text-white"><X className="w-4 h-4" /></button>
             )}
-          </div>
-
-          <div>
-            <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">Nama Karyawan</label>
-            <select required value={idPeserta} onChange={e => setIdPeserta(e.target.value)} disabled={isEditing} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-800 dark:text-white focus:outline-none">
-              <option value="">-- Pilih Peserta --</option>
-              {pesertaList.map(p => <option key={p.id_peserta} value={p.id_peserta}>{p.perner} - {p.nama_peserta}</option>)}
-            </select>
           </div>
 
           <div>
@@ -260,6 +282,19 @@ export const ManajemenPenilaian: React.FC = () => {
                 </option>
               ))}
             </select>
+          </div>
+
+          <div>
+            <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">Nama Karyawan</label>
+            <select required value={idPeserta} onChange={e => setIdPeserta(e.target.value)} disabled={isEditing || !idJadwal} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-800 dark:text-white focus:outline-none disabled:opacity-60">
+              <option value="">
+                {!idJadwal ? '-- Pilih Jadwal Pelatihan dahulu --' : filteredPesertaList.length === 0 ? '-- Tidak ada peserta terdaftar di jadwal ini --' : '-- Pilih Peserta --'}
+              </option>
+              {filteredPesertaList.map(p => <option key={p.id_peserta} value={p.id_peserta}>{p.perner} - {p.nama_peserta}</option>)}
+            </select>
+            {idJadwal && filteredPesertaList.length === 0 && (
+              <p className="text-[10px] text-amber-500 mt-1">Belum ada peserta yang terdaftar (peserta_jadwal) untuk jadwal ini.</p>
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-3">
