@@ -4,6 +4,7 @@ import {
   Library, Calendar, Award, Settings, LogOut,
   LayoutDashboard, Users, Sun, Moon, Menu, X, History
 } from 'lucide-react';
+import trainifyLogo from '../assets/logo.png';
 
 interface SidebarLayoutProps {
   activePage: string;
@@ -77,15 +78,29 @@ export const SidebarLayout: React.FC<SidebarLayoutProps> = ({
       >
 
         <div className="space-y-5 overflow-y-auto pr-1">
-          <div className="px-2 py-1 flex items-center justify-between">
-            <div>
-              {/* SPACE LOGO: letakkan logo perusahaan di sini, di atas judul Trainify */}
-              <div className="mb-2 flex items-center justify-center h-12 w-full rounded-lg border border-dashed border-slate-300 dark:border-slate-700 text-[10px] font-mono text-slate-400 dark:text-slate-500 uppercase tracking-wider">
-                MASUKKAN LOGO DI SINI
+          <div className="px-2 py-1 flex items-center justify-between">  
+          <div>
+            {/* SPACE LOGO: letakkan logo perusahaan di sini, di atas judul Trainify */}
+              
+              <div className="flex items-center justify-center">
+                  <img
+                    src={trainifyLogo}
+                    alt="Trainify Logo"
+                    className=" h-18 w-auto object-contain
+                                transition-all duration-300
+                                hover:scale-105
+                                dark:hover:drop-shadow-[0_0_12px_rgba(56,189,248,0.4)]"
+                  />
               </div>
-              <h2 className="text-xl font-black tracking-wider text-sky-500 dark:text-sky-400">TRAINIFY</h2>
-              <p className="text-[10px] font-mono text-slate-400 dark:text-slate-500 uppercase tracking-widest">Training Activity Tracker</p>
-            </div>
+                <h2 className="text-center text-xl font-black tracking-wider text-sky-500 dark:text-sky-400">
+                  TRAINIFY
+                </h2>
+
+                <p className="text-center text-[10px] font-mono text-slate-400 dark:text-slate-500 uppercase tracking-widest">
+                  Training Activity Tracker
+                </p>
+          </div>
+            
             {/* TOMBOL TUTUP: hanya tampak di mobile, sejajar dengan judul */}
             <button
               onClick={() => setIsMobileOpen(false)}
@@ -235,8 +250,26 @@ export const SidebarLayout: React.FC<SidebarLayoutProps> = ({
         </div>
 
         {/* FOOTER GLOBAL: tampil di setiap halaman karena SidebarLayout membungkus seluruh konten */}
-        <footer className="w-full p-4 text-center text-[11px] font-mono text-slate-400 dark:text-slate-500 border-t border-slate-200 dark:border-slate-800">
-          MASUKKAN FOOTER DI SINI
+        <footer className="w-full p-4 text-center text-[11px] font-mono text-slate-400">
+          <div className="flex flex-col items-center">
+            <span className="text-xs font-mono text-slate-500 dark:text-slate-400">
+              © 2026 Created by
+            </span>
+
+            <span
+              className="
+                mt-2
+                text-lg font-black
+                tracking-[0.5em]
+                text-sky-500 dark:text-sky-300
+                drop-shadow-[0_0_10px_rgba(56,189,248,0.6)]
+                transition-all duration-300
+                hover:scale-105
+              "
+            >
+              TEAM 4
+            </span>
+          </div>
         </footer>
       </main>
 
