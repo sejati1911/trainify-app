@@ -373,7 +373,7 @@ const handleCetakLaporan = () => {
         {/* Rekap Total Jam */}
         {showSummary && (
           <div className="bg-white dark:bg-slate-800 rounded-xl border border-sky-200 dark:border-slate-700 overflow-hidden mb-5">
-            <div className="px-4 py-3 bg-sky-50 dark:bg-slate-900 border-b border-sky-200 dark:border-slate-700 flex items-center justify-between">
+            <div className="px-4 py-3 bg-sky-100 dark:bg-slate-900 border-b border-sky-200 dark:border-slate-700 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Clock className="w-4 h-4 text-sky-400" />
                 <span className="text-sm font-semibold text-sky-400">Rekap Total Jam Pelatihan per Peserta</span>
@@ -385,7 +385,7 @@ const handleCetakLaporan = () => {
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
-                <thead className="bg-sky-50 dark:bg-slate-900 text-xs font-mono text-slate-500 dark:text-slate-400 uppercase">
+                <thead className="bg-sky-200 dark:bg-slate-900 text-xs font-mono text-slate-500 dark:text-slate-400 uppercase">
                   <tr>
                     <th className="p-3 pl-4">#</th>
                     <th className="p-3">PERNER</th>
@@ -394,7 +394,7 @@ const handleCetakLaporan = () => {
                     <th className="p-3 text-center">Total Jam</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-sky-100 dark:divide-slate-700 text-slate-700 dark:text-slate-200">
+                <tbody className="divide-y divide-sky-200 dark:divide-slate-700 text-slate-700 dark:text-slate-200">
                   {jamSummary.length === 0 ? (
                     <tr>
                       <td colSpan={5} className="p-5 text-center text-slate-400">
@@ -402,7 +402,7 @@ const handleCetakLaporan = () => {
                       </td>
                     </tr>
                   ) : jamSummary.map((r, i) => (
-                    <tr key={r.perner} className="hover:bg-sky-50/50 dark:hover:bg-slate-750/20 transition-colors">
+                    <tr key={r.perner} className="hover:bg-sky-50/50 dark:hover:bg-slate-500/50 transition-colors">
                       <td className="p-3 pl-4 text-slate-400 font-mono text-xs">{i + 1}</td>
                       <td className="p-3 font-mono text-xs text-sky-400">{r.perner}</td>
                       <td className="p-3 font-medium">{r.nama_peserta}</td>
@@ -413,7 +413,7 @@ const handleCetakLaporan = () => {
                 </tbody>
                 {jamSummary.length > 0 && (
                   <tfoot>
-                    <tr className="bg-sky-50 dark:bg-slate-900 border-t border-sky-200 dark:border-slate-600">
+                    <tr className="bg-sky-100 dark:bg-slate-900 border-t border-sky-200 dark:border-slate-600">
                       <td colSpan={3} className="p-3 pl-4 text-xs font-semibold text-slate-500 dark:text-slate-400">
                         Total Keseluruhan
                       </td>
