@@ -233,18 +233,40 @@ export const UserSettings: React.FC = () => {
             <p className="text-[10px] font-bold font-mono text-amber-400 uppercase tracking-wide">📦 Sinkronisasi Profil Karyawan</p>
             
             <div>
+             
+            </div>
+
+            <div>
               <label className="block text-[10px] text-slate-500 dark:text-slate-400 mb-0.5">NOMOR PERNER</label>
-              <input type="text" required placeholder="Contoh: 112311" value={perner} onChange={e => setPerner(e.target.value)} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-800 dark:text-white focus:outline-none" />
+              <input
+                type="text"
+                readOnly
+                placeholder="Terisi otomatis"
+                value={perner}
+                className="w-full bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-500 dark:text-slate-400 focus:outline-none cursor-not-allowed"
+              />
             </div>
 
             <div>
               <label className="block text-[10px] text-slate-500 dark:text-slate-400 mb-0.5">NAMA LENGKAP</label>
-              <input type="text" placeholder="Nama Lengkap Karyawan" value={namaPeserta} onChange={e => setNamaPeserta(e.target.value)} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-800 dark:text-white focus:outline-none" />
+              <input
+                type="text"
+                readOnly
+                placeholder="Terisi otomatis"
+                value={namaPeserta}
+                className="w-full bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-500 dark:text-slate-400 focus:outline-none cursor-not-allowed"
+              />
             </div>
 
             <div>
               <label className="block text-[10px] text-slate-500 dark:text-slate-400 mb-0.5">JABATAN</label>
-              <input type="text" placeholder="IT Support / Engineer" value={jobPosition} onChange={e => setJobPosition(e.target.value)} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-800 dark:text-white focus:outline-none" />
+              <input
+                type="text"
+                readOnly
+                placeholder="Terisi otomatis"
+                value={jobPosition}
+                className="w-full bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-500 dark:text-slate-400 focus:outline-none cursor-not-allowed"
+              />
             </div>
           </div>
 
