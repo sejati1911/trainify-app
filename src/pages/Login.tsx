@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import bcrypt from 'bcryptjs';
 import { Sun, Moon, Eye, EyeOff } from 'lucide-react';
+import { LoginMascot } from '../components/LoginMascot';
 
 export const Login: React.FC = () => {
   const { login } = useAuth();
@@ -66,6 +67,9 @@ export const Login: React.FC = () => {
 
   return (
     <div className="relative flex min-h-screen items-center justify-center bg-sky-50 dark:bg-slate-900 px-4 text-slate-800 dark:text-white transition-colors duration-300">
+      {/* MASKOT DOODLE: mata mengikuti kursor ke seluruh layar */}
+      <LoginMascot followCursor />
+
       <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 p-8 shadow-2xl border border-sky-200 dark:border-slate-700">
         {/* SPACE LOGO: letakkan logo perusahaan di sini, di atas judul Trainify */}
         <div className="mb-4 flex items-center justify-center h-16 w-full rounded-lg border border-dashed border-slate-300 dark:border-slate-600 text-[10px] font-mono text-slate-400 dark:text-slate-500 uppercase tracking-wider">
