@@ -57,6 +57,18 @@ export const ManajemenPenilaian: React.FC = () => {
     }
   }, [idJadwal, filteredPesertaList, isEditing]);
 
+  // HANDLER INPUT NILAI: membersihkan ketikan agar hanya berisi digit, lalu
+  // membatasi nilai maksimum 100 secara real-time (tidak menolak nilai 0 atau kosong
+  // saat masih mengetik, supaya tidak mengganggu pengalaman input).
+  const handleNilaiChange = (setter: (v: string) => void) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    let raw = e.target.value.replace(/[^0-9]/g, ''); // buang minus, titik, huruf, dsb.
+    if (raw !== '') {
+      const num = Number(raw);
+      if (num > 100) raw = '100';
+    }
+    setter(raw);
+  };
+
   const hitungGrade = (nilai: number): string => {
     if (nilai >= 90) return 'A';
     if (nilai >= 80) return 'B';
@@ -124,10 +136,29 @@ export const ManajemenPenilaian: React.FC = () => {
     setLiveStatus(akhir >= 60 ? 'Lulus' : 'Tidak Lulus');
   }, [nilaiPre, nilaiPost]);
 
+  // VALIDASI RENTANG NILAI (1-100):
+  // Mengembalikan pesan error jika nilai tidak valid, atau null jika valid.
+  // Pre-Test bersifat opsional, jadi hanya divalidasi jika diisi.
+  const validateNilai = (label: string, value: string, required: boolean): string | null => {
+    if (value === '') {
+      return required ? `Nilai ${label} wajib diisi!` : null;
+    }
+    const num = Number(value);
+    if (Number.isNaN(num)) return `Nilai ${label} harus berupa angka!`;
+    if (!Number.isInteger(num)) return `Nilai ${label} harus berupa angka bulat (tanpa desimal)!`;
+    if (num < 1 || num > 100) return `Nilai ${label} harus berada di rentang 1-100!`;
+    return null;
+  };
+
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!idPeserta || !idJadwal) return alert('Pilih komponen karyawan dan jadwal dahulu!');
-    if (nilaiPost === '') return alert('Nilai Post-Test wajib diisi!');
+
+    const preError = validateNilai('Pre-Test', nilaiPre, false);
+    if (preError) return alert(preError);
+
+    const postError = validateNilai('Post-Test', nilaiPost, true);
+    if (postError) return alert(postError);
 
     const hasPre = nilaiPre !== '';
 
@@ -300,11 +331,11 @@ export const ManajemenPenilaian: React.FC = () => {
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">Nilai Pre-Test <span className="text-slate-400 dark:text-slate-500 font-normal">(opsional)</span></label>
-              <input type="number" min="0" max="100" placeholder="0-100" value={nilaiPre} onChange={e => setNilaiPre(e.target.value)} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-800 dark:text-white focus:outline-none" />
+              <input type="number" min="1" max="100" step="1" inputMode="numeric" placeholder="1-100" value={nilaiPre} onChange={handleNilaiChange(setNilaiPre)} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-800 dark:text-white focus:outline-none" />
             </div>
             <div>
               <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">Nilai Post-Test</label>
-              <input type="number" required min="0" max="100" placeholder="0-100" value={nilaiPost} onChange={e => setNilaiPost(e.target.value)} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-800 dark:text-white focus:outline-none" />
+              <input type="number" required min="1" max="100" step="1" inputMode="numeric" placeholder="1-100" value={nilaiPost} onChange={handleNilaiChange(setNilaiPost)} className="w-full bg-sky-50 dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-lg p-2 text-xs text-slate-800 dark:text-white focus:outline-none" />
             </div>
           </div>
 
